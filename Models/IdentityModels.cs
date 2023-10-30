@@ -19,11 +19,15 @@ namespace BlogNew.Models
         }
 
         public ICollection<Post> Posts { get; set; }
+        public ICollection<Thumb> Thumbs { get; set; }
+
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Thumb> Thumbs { get; set; }
+
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -43,6 +47,20 @@ namespace BlogNew.Models
                 .HasRequired(p => p.User)
                 .WithMany(u => u.Posts)
                 .HasForeignKey(p => p.UserId);
+
+            modelBuilder.Entity<Thumb>()
+                .HasRequired(t => t.User)
+                .WithMany(u => u.Thumbs)
+                .HasForeignKey(t => t.UserId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Thumb>()
+                .HasRequired(t => t.Post)
+                .WithMany()
+                .HasForeignKey(t => t.PostId)
+                .WillCascadeOnDelete(false);
+
+
         }
 
     }
