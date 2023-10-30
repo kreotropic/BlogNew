@@ -167,9 +167,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202310301457343_InitialCreate.cs" />
+    <Compile Include="Migrations\202310301457343_InitialCreate.designer.cs">
+      <DependentUpon>202310301457343_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202310301524386_AddPostModel.cs" />
+    <Compile Include="Migrations\202310301524386_AddPostModel.designer.cs">
+      <DependentUpon>202310301524386_AddPostModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Post.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -274,6 +284,14 @@
     <Content Include="Scripts\bootstrap.bundle.js.map" />
     <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202310301457343_InitialCreate.resx">
+      <DependentUpon>202310301457343_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202310301524386_AddPostModel.resx">
+      <DependentUpon>202310301524386_AddPostModel.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
