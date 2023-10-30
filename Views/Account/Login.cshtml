@@ -15,21 +15,21 @@
                     <h4>Use a local account to log in.</h4>
                     <hr />
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="row">
-                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
+                    <div class="row mb-md-2">
+                        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-md-2">
                         @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-10">
                             @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-3 mb-md-2">
                         <div class="offset-md-2 col-md-10">
                             <div class="checkbox">
                                 @Html.CheckBoxFor(m => m.RememberMe)
@@ -37,7 +37,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-3 mb-md-2">
                         <div class="offset-md-2 col-md-10">
                             <input type="submit" value="Log in" class="btn btn-outline-dark" />
                         </div>
