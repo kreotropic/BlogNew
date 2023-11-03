@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,6 +20,9 @@ namespace BlogNew.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+        [Required]
+        public bool IsDisabled {  get; set; } = false;
 
         public ICollection<Post> Posts { get; set; }
         public ICollection<Thumb> Thumbs { get; set; }
@@ -62,6 +68,5 @@ namespace BlogNew.Models
 
 
         }
-
     }
 }
