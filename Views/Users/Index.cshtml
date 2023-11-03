@@ -1,0 +1,45 @@
+﻿@model IEnumerable<BlogNew.Models.UserViewModel>
+
+@{
+    ViewBag.Title = "Users";
+}
+
+<h2 class="mb-3">Users</h2>
+
+<div class="mb-3">
+    <div class="mb-3">@Html.ActionLink("Create New", "Create")</div>
+    @using (Html.BeginForm("Index", "Users", FormMethod.Get))
+    {
+        <div>
+            <span>Username: </span>@Html.TextBox("search")
+            <input type="submit" value="Filter" />
+        </div>
+    }
+</div>
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">@Html.DisplayNameFor(model => model.Username)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.Email)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.Roles)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.IsDisabled)</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td scope="row">@Html.DisplayFor(modelItem => item.Username)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.Roles)</td>
+                <td>@Html.DisplayFor(modelItem => item.IsDisabled)</td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.UserId }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = item.UserId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.UserId })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

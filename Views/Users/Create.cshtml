@@ -1,0 +1,51 @@
+﻿@model BlogNew.Models.UserCreateViewModel
+
+@{
+    ViewBag.Title = "Create User";
+}
+
+<h2>Create User</h2>
+
+@using (Html.BeginForm("Create", "Users", FormMethod.Post, new { role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="row mb-md-2">
+        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 col-form-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row mb-md-2">
+        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row mb-md-2">
+        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row mb-3 mb-md-2">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 col-form-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset-md-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-outline-dark" />
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
