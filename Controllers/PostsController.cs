@@ -16,11 +16,22 @@ namespace BlogNew.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Posts
-        public ActionResult Index()
+        public ActionResult Index(int? scrollPosition)
         {
 
-            var posts = db.Posts.Include(p => p.User);
-            return View(posts.ToList());
+            var posts = db.Posts.ToList();
+
+            foreach (var post in posts)
+            {
+                post.ThumbsCount = ThumbsCount(post.PostId);
+            }
+
+            if (scrollPosition.HasValue)
+            {
+                TempData["ScrollPosition"] = scrollPosition.Value;
+            }
+
+            return View(posts);
         }
 
         // GET: Posts/Details/5
@@ -131,6 +142,44 @@ namespace BlogNew.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private int ThumbsCount(int postId)
+        {
+            return db.Thumbs.Count(t => t.PostId == postId);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ThumbsUp(int postId)
+        {
+            var post = db.Posts.Find(postId);
+
+            if (post != null)
+            {
+                post.ThumbsCount += 1;
+
+                string userId = User.Identity.GetUserId();
+
+                bool alreadyThumbed = db.Thumbs.Any(t => t.PostId == postId && t.UserId == userId);
+
+                if (!alreadyThumbed)
+                {
+                    Thumb thumb = new Thumb
+                    {
+                        UserId = userId,
+                        PostId = postId,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+
+                    db.Thumbs.Add(thumb);
+                }
+
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
         }
 
 

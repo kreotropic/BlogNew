@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace BlogNew.Models
 {
@@ -34,6 +36,18 @@ namespace BlogNew.Models
         public DateTime UpdatedAt { get; set; }
         public bool IsPrivate { get; set; }
 
+        [NotMapped]
+        public int ThumbsCount
+        {
+            get
+            {
+                using (var db = new ApplicationDbContext())
+                {
+                    return db.Thumbs.Count(t => t.PostId == this.PostId);
+                }
+            }
+            set { }
+        }
 
         //assign date to created at
         public Post()

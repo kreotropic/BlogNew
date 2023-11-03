@@ -17,6 +17,17 @@
                     @*<p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>*@
                     <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
 
+                    <p class="card-text">
+                        Thumbs: @item.ThumbsCount
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-link">Thumbs Up</button>
+                            }
+                        }
+                    </p>
 
 
                     @if (User.Identity.IsAuthenticated)
@@ -32,4 +43,17 @@
             </div>
         </div>
     }
+
+    @section scripts {
+        <script>
+        // Get the saved scroll position
+        var scrollPosition = @TempData["ScrollPosition"] ?? 0;
+
+        // Scroll to the saved position
+        if (scrollPosition) {
+            $(document).scrollTop(scrollPosition);
+        }
+        </script>
+    }
+
 </div>
