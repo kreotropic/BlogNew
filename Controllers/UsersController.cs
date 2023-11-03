@@ -214,7 +214,20 @@ namespace BlogNew.Controllers
             {
                 return HttpNotFound();
             }
-            return View(applicationUser);
+
+            //ViewModel
+            var userRoles = UserManager.GetRoles(applicationUser.Id).ToArray();
+
+            UserViewModel userViewModel = new UserViewModel
+            {
+                UserId = applicationUser.Id,
+                Username = applicationUser.UserName,
+                Email = applicationUser.Email,
+                IsDisabled = applicationUser.IsDisabled,
+                Roles = string.Join(",", userRoles)
+            };
+
+            return View(userViewModel);
         }
 
         // POST: Users/Delete/5
@@ -223,6 +236,7 @@ namespace BlogNew.Controllers
         public ActionResult DeleteConfirmed(string id)
         {
             ApplicationUser applicationUser = db.Users.Find(id);
+
             db.Users.Remove(applicationUser);
             db.SaveChanges();
             return RedirectToAction("Index");
