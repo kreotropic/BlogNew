@@ -48,11 +48,6 @@ namespace BlogNew.Models
 
     public class LoginViewModel
     {
-        /*[Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
-        public string Email { get; set; }*/
-
         [Required(ErrorMessage = "Username is required.")]
         [Display(Name = "Username")]
         [RegularExpression(@"^[a-zA-Z0-9]{1,10}$",
