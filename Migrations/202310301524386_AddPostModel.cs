@@ -16,8 +16,8 @@
                         Title = c.String(),
                         Sinopse = c.String(),
                         Content = c.String(),
-                        CreatedAt = c.DateTime(nullable: false),
-                        UpdatedAt = c.DateTime(nullable: false),
+                        CreatedAt = c.DateTime(nullable: false, precision: 7),
+                        UpdatedAt = c.DateTime(nullable: false, precision: 7),
                         IsPrivate = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.PostId)
