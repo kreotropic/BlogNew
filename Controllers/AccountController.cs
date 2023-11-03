@@ -73,6 +73,13 @@ namespace BlogNew.Controllers
                 return View(model);
             }
 
+            //If account disabled returns appropriate view
+            var user = UserManager.FindByName(model.UserName);
+            if (user != null)
+            {
+                if (user.IsDisabled) return View("~/Views/Shared/Disabled.cshtml");
+            }
+
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);

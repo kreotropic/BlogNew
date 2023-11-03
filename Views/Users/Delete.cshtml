@@ -1,0 +1,51 @@
+﻿@model BlogNew.Models.UserViewModel
+
+@{
+    ViewBag.Title = "Delete User";
+}
+
+<h2>Delete this user?</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal rounded p-3 bg-light"
+        style="width:fit-content">
+        <dt>
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Username)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Roles)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Roles)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsDisabled)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IsDisabled)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color mb-3">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+        @Html.ActionLink("Back to List", "Index")
+    }
+</div>
