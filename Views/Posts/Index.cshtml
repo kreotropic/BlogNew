@@ -1,5 +1,13 @@
 ﻿@model IEnumerable<BlogNew.Models.Post>
-<link rel="stylesheet" href="@Url.Content("~/Content/style.css")" />
+@*@Styles.Render("~/Content/style")*@
+
+
+
+<style>
+    textarea {
+        max-width: 100%;
+    }
+</style>
 
 @{
     ViewBag.Title = "PostsList";
