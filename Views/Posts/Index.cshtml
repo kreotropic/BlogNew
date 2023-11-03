@@ -16,7 +16,9 @@
                     <p class="card-text">@Html.DisplayFor(modelItem => item.Sinopse)</p>
                     @*<p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>*@
                     <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
-                    
+
+
+
                     @if (User.Identity.IsAuthenticated)
                     {
                         <p class="card-text">

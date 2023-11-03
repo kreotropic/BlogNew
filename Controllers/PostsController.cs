@@ -18,6 +18,7 @@ namespace BlogNew.Controllers
         // GET: Posts
         public ActionResult Index()
         {
+
             var posts = db.Posts.Include(p => p.User);
             return View(posts.ToList());
         }
@@ -131,5 +132,7 @@ namespace BlogNew.Controllers
             }
             base.Dispose(disposing);
         }
+
+
     }
 }
