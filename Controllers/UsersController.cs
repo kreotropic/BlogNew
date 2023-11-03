@@ -17,7 +17,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace BlogNew.Controllers
 {
-    [Authorize(Users = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
