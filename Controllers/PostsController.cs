@@ -101,7 +101,9 @@ namespace BlogNew.Controllers
         {
             if (ModelState.IsValid)
             {
+                post.UserId = User.Identity.GetUserId();
                 db.Entry(post).State = EntityState.Modified;
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
