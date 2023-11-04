@@ -97,11 +97,12 @@ namespace BlogNew.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PostId,UserId,Title,Sinopse,Content,CreatedAt,UpdatedAt,IsPrivate")] Post post)
+        public ActionResult Edit(/*[Bind(Include = "PostId,UserId,Title,Sinopse,Content,CreatedAt,UpdatedAt,IsPrivate")]*/ Post post)
         {
             if (ModelState.IsValid)
             {
                 post.UserId = User.Identity.GetUserId();
+                post.Sinopse = post.Content.Length > 256 ? post.Content.Substring(0, 256) : post.Content;
                 db.Entry(post).State = EntityState.Modified;
 
                 db.SaveChanges();
@@ -176,6 +177,10 @@ namespace BlogNew.Controllers
                     };
 
                     db.Thumbs.Add(thumb);
+                } else
+                {
+                    Thumb thumb = db.Thumbs.FirstOrDefault(t => t.PostId == postId && t.UserId == userId);
+                    db.Thumbs.Remove(thumb);
                 }
 
                 db.SaveChanges();
