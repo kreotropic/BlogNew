@@ -2,6 +2,8 @@
 @using PagedList.Mvc;
 
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/style.css" rel="stylesheet" type="text/css" />
+
 
 @{
     ViewBag.Title = "PostsList";
@@ -37,21 +39,27 @@
 
                         <p class="card-text">Created by: @Html.DisplayFor(modelItem => item.User.UserName)</p>
 
-                        <p class="card-text">
-                            Thumbs: @item.ThumbsCount
+                        <div class="card-text">
                             @if (User.Identity.IsAuthenticated)
                             {
                                 using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
                                 {
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-link">Thumbs Up</button>
+                                    <button type="submit" class="btn">
+                                        <i class="bi-2x bi-hand-thumbs-up-fill"></i> @item.ThumbsCount
+                                    </button>
                                 }
                             }
-                        </p>
+                            else
+                            {
+                                <i class="bi-2x bi-hand-thumbs-up-fill"></i> @item.ThumbsCount
+                            }
+                        </div>
+
+
 
                         @if (User.Identity.IsAuthenticated)
                         {
-                            // Check if the logged-in user is the creator of the post
                             bool isCreator = item.User.UserName == User.Identity.Name;
 
                             <p class="card-text">
