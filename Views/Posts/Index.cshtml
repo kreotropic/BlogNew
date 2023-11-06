@@ -1,68 +1,82 @@
-﻿@model IEnumerable<BlogNew.Models.Post>
-@*@Styles.Render("~/Content/style")*@
+﻿@model PagedList.IPagedList<BlogNew.Models.Post>
+@using PagedList.Mvc;
 
-
-
-<style>
-    textarea {
-        max-width: 100%;
-    }
-</style>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "PostsList";
 }
 
-<h2>Posts List</h2>
+
 
 <div class="row">
-    @foreach (var item in Model)
+    @using (Html.BeginForm())
     {
-        <div class="container">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                    <p class="card-text">@Html.DisplayFor(modelItem => item.Sinopse)</p>
-                    @*<p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>*@
-                    <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
+        <p>
+            Find by name: @Html.TextBox("SearchString")
+            <input type="submit" value="Search" />
+        </p>
+    }
 
-                    <p class="card-text">
-                        Thumbs: @item.ThumbsCount
+    <table class="table">
+        <tr>
+            <th>
+                @Html.ActionLink("Created At", "Index", new { sortOrder = ViewBag.DateSortParm })
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <div class="container">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark" })</h5>
+                        <p class="card-text">@Html.DisplayFor(modelItem => item.Sinopse)</p>
+                        <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
+
+                        <p class="card-text">Created by: @Html.DisplayFor(modelItem => item.User.UserName)</p>
+
+                        <p class="card-text">
+                            Thumbs: @item.ThumbsCount
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link">Thumbs Up</button>
+                                }
+                            }
+                        </p>
+
                         @if (User.Identity.IsAuthenticated)
                         {
-                            using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
-                            {
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-link">Thumbs Up</button>
-                            }
+                            // Check if the logged-in user is the creator of the post
+                            bool isCreator = item.User.UserName == User.Identity.Name;
+
+                            <p class="card-text">
+                                @if (isCreator)
+                                {
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.PostId }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.PostId }, new { @class = "btn btn-danger" })
+                                }
+                                @*@Html.ActionLink("Details", "Details", new { id = item.PostId }, new { @class = "btn btn-secondary" })*@
+                            </p>
                         }
-                    </p>
 
 
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <p class="card-text">
-                            @Html.ActionLink("Edit", "Edit", new { id = item.PostId }, new { @class = "btn btn-primary" }) |
-                            @Html.ActionLink("Details", "Details", new { id = item.PostId }, new { @class = "btn btn-secondary" }) |
-                            @Html.ActionLink("Delete", "Delete", new { id = item.PostId }, new { @class = "btn btn-danger" })
-                        </p>
-                    }
-
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+
+    </table>
+
+    <div class="pagination-container">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    </div>
 
     @section scripts {
-        <script>
-        // Get the saved scroll position
-        var scrollPosition = @TempData["ScrollPosition"] ?? 0;
 
-        // Scroll to the saved position
-        if (scrollPosition) {
-            $(document).scrollTop(scrollPosition);
-        }
-        </script>
     }
-
 </div>

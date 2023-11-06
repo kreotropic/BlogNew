@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using BlogNew.Models;
 using Microsoft.AspNet.Identity;
+using PagedList;
 
 namespace BlogNew.Controllers
 {
@@ -16,23 +17,60 @@ namespace BlogNew.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Posts
-        public ActionResult Index(int? scrollPosition)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
 
-            var posts = db.Posts.ToList();
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var posts = (from p in db.Posts
+                         join u in db.Users on p.UserId equals u.Id
+                         select new { Post = p, User = u })
+                        .ToList();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                posts = posts.Where(p => p.User.UserName.Contains(searchString)).ToList();
+            }
 
             foreach (var post in posts)
             {
-                post.ThumbsCount = ThumbsCount(post.PostId);
+                post.Post.ThumbsCount = ThumbsCount(post.Post.PostId, db);
             }
 
-            if (scrollPosition.HasValue)
+            switch (sortOrder)
             {
-                TempData["ScrollPosition"] = scrollPosition.Value;
+                case "Date":
+                    posts = posts.OrderBy(p => p.Post.CreatedAt).ToList();
+                    break;
+                case "date_desc":
+                    posts = posts.OrderByDescending(p => p.Post.CreatedAt).ToList();
+                    break;
+                default:
+                    posts = posts.OrderByDescending(p => p.Post.CreatedAt).ToList();
+                    break;
             }
 
-            return View(posts);
+            int pageSize = 4; 
+            int pageNumber = (page ?? 1);
+
+            return View(posts.Select(p => p.Post).ToPagedList(pageNumber, pageSize));
         }
+
+
+
+
 
         // GET: Posts/Details/5
         public ActionResult Details(int? id)
@@ -147,20 +185,17 @@ namespace BlogNew.Controllers
             base.Dispose(disposing);
         }
 
-        private int ThumbsCount(int postId)
-        {
-            return db.Thumbs.Count(t => t.PostId == postId);
-        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ThumbsUp(int postId)
         {
-            var post = db.Posts.Find(postId);
+            var post = db.Posts.FirstOrDefault(p => p.PostId == postId);
 
             if (post != null)
             {
-                post.ThumbsCount += 1;
+                post.ThumbsCount = db.Thumbs.Count(t => t.PostId == postId);
 
                 string userId = User.Identity.GetUserId();
 
@@ -177,7 +212,8 @@ namespace BlogNew.Controllers
                     };
 
                     db.Thumbs.Add(thumb);
-                } else
+                }
+                else
                 {
                     Thumb thumb = db.Thumbs.FirstOrDefault(t => t.PostId == postId && t.UserId == userId);
                     db.Thumbs.Remove(thumb);
@@ -189,6 +225,11 @@ namespace BlogNew.Controllers
             return RedirectToAction("Index");
         }
 
+
+        private int ThumbsCount(int postId, ApplicationDbContext dbContext)
+        {
+            return dbContext.Thumbs.Count(t => t.PostId == postId);
+        }
 
     }
 }
