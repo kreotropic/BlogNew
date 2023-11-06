@@ -32,7 +32,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <h5 class="card-title">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark" })</h5>
-                        <p class="card-text">@Html.DisplayFor(modelItem => item.Sinopse)</p>
+                        <p class="card-text">@Html.DisplayFor(modelItem => item.Sinopse)>></p>
                         <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
 
                         <p class="card-text">Created by: @Html.DisplayFor(modelItem => item.User.UserName)</p>

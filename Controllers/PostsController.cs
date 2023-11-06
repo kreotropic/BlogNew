@@ -102,8 +102,30 @@ namespace BlogNew.Controllers
         {
             if (ModelState.IsValid)
             {
-                post.Sinopse = post.Content.Length > 256 ? post.Content.Substring(0, 256) : post.Content;
+                
                 post.UserId = User.Identity.GetUserId();
+                int maxLength = 256;
+
+                if (post.Content.Length > maxLength)
+                {
+                    int lastSpace = post.Content.LastIndexOf(' ', maxLength);
+
+                    if (lastSpace != -1)
+                    {
+                        // Trim at the last space within the first 256 characters
+                        post.Sinopse = post.Content.Substring(0, lastSpace);
+                    }
+                    else
+                    {
+                        // No space found within the first 256 characters, so just trim at the character limit
+                        post.Sinopse = post.Content.Substring(0, maxLength);
+                    }
+                }
+                else
+                {
+                    // Content is already within the limit
+                    post.Sinopse = post.Content;
+                }
 
                 db.Posts.Add(post);
                 db.SaveChanges();
