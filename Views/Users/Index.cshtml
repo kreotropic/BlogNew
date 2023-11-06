@@ -10,8 +10,9 @@
     <div class="mb-3">@Html.ActionLink("Create New", "Create")</div>
     @using (Html.BeginForm("Index", "Users", FormMethod.Get))
     {
-        <div>
-            <span>Username: </span>@Html.TextBox("search")
+        <div class="d-flex gap-2">
+            <div><span>Role: </span>@Html.DropDownList("roleFilter", "All")</div>
+            <div><span>Username: </span>@Html.TextBox("search")</div>
             <input type="submit" value="Filter" />
         </div>
     }

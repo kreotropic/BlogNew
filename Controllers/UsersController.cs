@@ -36,7 +36,7 @@ namespace BlogNew.Controllers
         }
 
         // GET: Users
-        public ActionResult Index(string search)
+        public ActionResult Index(string search, string roleFilter)
         {
             //Gets all users and respective roles
             var usersWithRoles = 
@@ -66,6 +66,15 @@ namespace BlogNew.Controllers
                 usersWithRoles = usersWithRoles.Where(
                     u => u.Username.ToLower().Contains(search.ToLower()));
             }
+            //If role filter inserted returns list with users with only that role
+            if (!string.IsNullOrWhiteSpace(roleFilter))
+            {
+                usersWithRoles = usersWithRoles.Where(
+                    u => u.Roles.Contains(roleFilter));
+            }
+
+            //Add role list to view
+            ViewBag.roleFilter = new SelectList(GetAllRolesFromDB());
 
             return View(usersWithRoles);
         }
