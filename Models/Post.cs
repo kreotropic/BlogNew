@@ -31,8 +31,9 @@ namespace BlogNew.Models
         [StringLength(5000, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 100)]
         public string Content { get; set; }
 
-
+        [Column(TypeName = "datetime2")]
         public DateTime CreatedAt { get; set; }
+        [Column(TypeName = "datetime2")]
         public DateTime? UpdatedAt { get; set; } 
         public bool IsPrivate { get; set; }
 

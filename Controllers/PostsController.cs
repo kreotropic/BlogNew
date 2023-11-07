@@ -163,8 +163,19 @@ namespace BlogNew.Controllers
             {
                 post.UserId = User.Identity.GetUserId();
                 post.Sinopse = post.Content.Length > 256 ? post.Content.Substring(0, 256) : post.Content;
-                post.UpdatedAt = DateTime.UtcNow;
-                db.Entry(post).State = EntityState.Modified;
+
+                // Create a detached entity
+                var attachedEntity = new Post { PostId = post.PostId };
+                db.Posts.Attach(attachedEntity);
+
+                // Exclude CreatedAt from modification
+                db.Entry(attachedEntity).Property(x => x.CreatedAt).IsModified = false;
+
+                // Update other properties
+                attachedEntity.Title = post.Title;
+                attachedEntity.Content = post.Content;
+                attachedEntity.UpdatedAt = DateTime.UtcNow;
+                attachedEntity.IsPrivate = post.IsPrivate;
 
                 db.SaveChanges();
                 return RedirectToAction("Index");
