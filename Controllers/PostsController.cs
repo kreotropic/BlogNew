@@ -207,45 +207,55 @@ namespace BlogNew.Controllers
             base.Dispose(disposing);
         }
 
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ThumbsUp(int postId)
         {
-            var post = db.Posts.FirstOrDefault(p => p.PostId == postId);
-
-            if (post != null)
+            try
             {
-                post.ThumbsCount = db.Thumbs.Count(t => t.PostId == postId);
+                var post = db.Posts.FirstOrDefault(p => p.PostId == postId);
 
-                string userId = User.Identity.GetUserId();
-
-                bool alreadyThumbed = db.Thumbs.Any(t => t.PostId == postId && t.UserId == userId);
-
-                if (!alreadyThumbed)
+                if (post != null)
                 {
-                    Thumb thumb = new Thumb
-                    {
-                        UserId = userId,
-                        PostId = postId,
-                        CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow
-                    };
+                    post.ThumbsCount = db.Thumbs.Count(t => t.PostId == postId);
 
-                    db.Thumbs.Add(thumb);
+                    string userId = User.Identity.GetUserId();
+
+                    bool alreadyThumbed = db.Thumbs.Any(t => t.PostId == postId && t.UserId == userId);
+
+                    if (!alreadyThumbed)
+                    {
+                        Thumb thumb = new Thumb
+                        {
+                            UserId = userId,
+                            PostId = postId,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        };
+
+                        db.Thumbs.Add(thumb);
+                    }
+                    else
+                    {
+                        Thumb thumb = db.Thumbs.FirstOrDefault(t => t.PostId == postId && t.UserId == userId);
+                        db.Thumbs.Remove(thumb);
+                    }
+
+                    db.SaveChanges();
+
+                    return Json(new { ThumbsCount = post?.ThumbsCount ?? 0 });
                 }
                 else
                 {
-                    Thumb thumb = db.Thumbs.FirstOrDefault(t => t.PostId == postId && t.UserId == userId);
-                    db.Thumbs.Remove(thumb);
+                    return Json(new { ThumbsCount = 0, Error = "Post not found" });
                 }
-
-                db.SaveChanges();
             }
-
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                return Json(new { ThumbsCount = 0, Error = ex.Message });
+            }
         }
+
 
 
         private int ThumbsCount(int postId, ApplicationDbContext dbContext)

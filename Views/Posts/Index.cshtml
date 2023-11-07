@@ -3,6 +3,7 @@
 
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <link href="~/Content/style.css" rel="stylesheet" type="text/css" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 
 @{
@@ -45,16 +46,17 @@
                                 using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
                                 {
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn">
-                                        <i class="bi-2x bi-hand-thumbs-up-fill"></i> @item.ThumbsCount
+                                    <button type="button" class="btn thumbs-up-btn" data-post-id="@item.PostId">
+                                        <i class="bi bi-hand-thumbs-up-fill"></i> <span class="thumbs-count">@item.ThumbsCount</span>
                                     </button>
                                 }
                             }
                             else
                             {
-                                <i class="bi-2x bi-hand-thumbs-up-fill"></i> @item.ThumbsCount
+                                <i class="bi bi-hand-thumbs-up-fill"></i> <span class="thumbs-count">@item.ThumbsCount</span>
                             }
                         </div>
+
 
 
 
@@ -85,6 +87,32 @@
     </div>
 
     @section scripts {
+        <script>
+            $(document).ready(function () {
+                $(".thumbs-up-btn").click(function () {
+                    var postId = $(this).data("post-id");
+                    var counterElement = $(this).closest('.card-body').find(".thumbs-count");
 
+                    $.ajax({
+                        type: "POST",
+                        url: "/Posts/ThumbsUp",
+                        data: {
+                            postId: postId,
+                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (data) {
+                            // Update the counter with the new count
+                            counterElement.text(data.ThumbsCount);
+                        },
+                        dataType: 'json', // Make sure to specify the expected data type
+                        error: function (error) {
+                            console.error("Error during Thumbs Up:", error);
+                        }
+                    });
+
+                });
+            });
+        </script>
     }
+
 </div>
