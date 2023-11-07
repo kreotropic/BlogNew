@@ -55,11 +55,8 @@ namespace BlogNew.Models
             CreatedAt = DateTime.UtcNow;
         }
 
-        //assign date to updated at
-        public void Update()
-        {
-            UpdatedAt = DateTime.UtcNow;
-        }
+     
+
 
     }
 }

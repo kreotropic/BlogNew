@@ -163,6 +163,7 @@ namespace BlogNew.Controllers
             {
                 post.UserId = User.Identity.GetUserId();
                 post.Sinopse = post.Content.Length > 256 ? post.Content.Substring(0, 256) : post.Content;
+                post.UpdatedAt = DateTime.UtcNow;
                 db.Entry(post).State = EntityState.Modified;
 
                 db.SaveChanges();

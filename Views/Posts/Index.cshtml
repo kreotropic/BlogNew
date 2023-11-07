@@ -101,10 +101,10 @@
                             __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
                         },
                         success: function (data) {
-                            // Update the counter with the new count
+                            
                             counterElement.text(data.ThumbsCount);
                         },
-                        dataType: 'json', // Make sure to specify the expected data type
+                        dataType: 'json',
                         error: function (error) {
                             console.error("Error during Thumbs Up:", error);
                         }
