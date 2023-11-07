@@ -37,7 +37,7 @@
 
                 <div class="form-group">
                     @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label" })
-                    @Html.TextAreaFor(model => model.Content, new { @class = "form-control", rows = 10 })
+                    @Html.TextAreaFor(model => model.Content, new { @class = "form-control",  @id = "tiny"  })
                     @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
                 </div>
 
@@ -68,4 +68,17 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://cdn.tiny.cloud/1/bcdxnqsdzr2xpwhq3vmk9xi7lat9ov3scbr2ksx0jx6ffo3c/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#tiny',
+                plugins: [
+                'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
+                'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | a11ycheck casechange blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify |' +
+                'bullist numlist checklist outdent indent | removeformat | code table help'
+        })
+    </script>
 }

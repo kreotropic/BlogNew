@@ -79,7 +79,7 @@ namespace BlogNew.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
+            Post post = db.Posts.Include(p => p.User).FirstOrDefault(p => p.PostId == id);
             if (post == null)
             {
                 return HttpNotFound();

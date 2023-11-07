@@ -199,6 +199,10 @@
     <Compile Include="Migrations\202311071524424_precision7.designer.cs">
       <DependentUpon>202311071524424_precision7.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202311071605020_richText.cs" />
+    <Compile Include="Migrations\202311071605020_richText.designer.cs">
+      <DependentUpon>202311071605020_richText.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -349,6 +353,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202311071524424_precision7.resx">
       <DependentUpon>202311071524424_precision7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202311071605020_richText.resx">
+      <DependentUpon>202311071605020_richText.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

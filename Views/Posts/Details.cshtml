@@ -7,38 +7,53 @@
 
 
 <div>
-    
-   
-    
 
 
 
 
 
 
-        <h1>
-            @Html.DisplayFor(model => model.Title)
-        </h1>
-
- 
 
 
 
-
-
-        <p>
-            @Html.DisplayFor(model => model.Content)
-        </p>
-
-        <p>Created at</p>
-
-        <p>
-            @Html.DisplayFor(model => model.CreatedAt)
-        </p>
+    <h1>
+        @Html.DisplayFor(model => model.Title)
+    </h1>
 
 
 
-  
+
+
+
+
+    <p>
+        @Html.Raw(Model.Content)
+    </p>
+
+
+    <p>Created by</p>
+    <p>
+        @if (Model.User != null)
+        {
+            @Html.DisplayFor(model => model.User.UserName)
+        }
+        else
+        {
+            <text>User not available</text>
+        }
+    </p>
+
+
+
+    <p>Created at</p>
+
+    <p>
+        @Html.DisplayFor(model => model.CreatedAt)
+    </p>
+
+
+
+
 </div>
 <p>
     @*@Html.ActionLink("Edit", "Edit", new { id = Model.PostId }) |*@

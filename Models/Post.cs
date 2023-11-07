@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Web.Mvc;
 
 namespace BlogNew.Models
 {
@@ -29,6 +29,8 @@ namespace BlogNew.Models
         [Display(Name = "Content")]
         [Required(ErrorMessage = "Please insert the content of the post")]
         [StringLength(5000, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 100)]
+        [DataType(DataType.MultilineText)]
+        [AllowHtml]
         public string Content { get; set; }
 
         [Column(TypeName = "datetime2")]
