@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -14,6 +15,7 @@ using BlogNew.Models;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using PagedList;
 
 namespace BlogNew.Controllers
 {
@@ -22,6 +24,7 @@ namespace BlogNew.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager _userManager;
+        private const int PageSize = 10;
 
         public ApplicationUserManager UserManager
         {
@@ -36,7 +39,7 @@ namespace BlogNew.Controllers
         }
 
         // GET: Users
-        public ActionResult Index(string search, string roleFilter)
+        public ActionResult Index(string search, string roleFilter, int page = 1)
         {
             //Gets all users and respective roles
             var usersWithRoles = 
@@ -60,23 +63,29 @@ namespace BlogNew.Controllers
                     Roles = string.Join(",", p.RoleNames)
                 });
 
-            //If search query inserted returns list with users that contain query value in their usernames (the search is case insensitive)
+            //If search query inserted returns list of users that contain query value in their usernames or email (the search is case insensitive)
             if (!string.IsNullOrWhiteSpace(search))
             {
                 usersWithRoles = usersWithRoles.Where(
-                    u => u.Username.ToLower().Contains(search.ToLower()));
+                    u => u.Username.ToLower().Contains(search.ToLower()) ||
+                    u.Email.ToLower().Contains(search.ToLower()));
             }
-            //If role filter inserted returns list with users with only that role
-            if (!string.IsNullOrWhiteSpace(roleFilter))
+            //If role filter inserted returns list of users with only that role
+            if (!string.IsNullOrWhiteSpace(roleFilter) && roleFilter != "All")
             {
                 usersWithRoles = usersWithRoles.Where(
                     u => u.Roles.Contains(roleFilter));
+                ViewBag.currentFilter = roleFilter;
             }
 
             //Add role list to view
-            ViewBag.roleFilter = new SelectList(GetAllRolesFromDB());
+            ViewBag.roleFilter = new SelectList(GetRolesListWithAll(), roleFilter);
 
-            return View(usersWithRoles);
+            //Add current filters to view bag because of paginated returns
+            ViewBag.currentSearch = search;
+            ViewBag.currentFilter = roleFilter;
+
+            return View(usersWithRoles.ToPagedList(page, PageSize));
         }
 
         // GET: Users/Details/5
@@ -286,6 +295,20 @@ namespace BlogNew.Controllers
                 bool isSelected = role == model.Role;
                 model.SelectRoles.Add(new SelectListItem { Text = role, Value = role, Selected = isSelected });
             }
+        }
+
+        private List<string> GetRolesListWithAll()
+        {
+            var roles = GetAllRolesFromDB();
+
+            List<string> result = new List<string>() { "All" };
+
+            foreach (var role in roles)
+            {
+                result.Add(role);
+            }
+
+            return result;
         }
     }
 }

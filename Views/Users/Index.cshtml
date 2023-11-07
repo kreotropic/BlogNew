@@ -1,5 +1,5 @@
-﻿@model IEnumerable<BlogNew.Models.UserViewModel>
-
+﻿@model PagedList.IPagedList<BlogNew.Models.UserViewModel>
+@using PagedList.Mvc;
 @{
     ViewBag.Title = "Users";
 }
@@ -11,8 +11,8 @@
     @using (Html.BeginForm("Index", "Users", FormMethod.Get))
     {
         <div class="d-flex gap-2">
-            <div><span>Role: </span>@Html.DropDownList("roleFilter", "All")</div>
-            <div><span>Username: </span>@Html.TextBox("search")</div>
+            <div><span>Role: </span>@Html.DropDownList("roleFilter")</div>
+            <div><span>User/Email: </span>@Html.TextBox("search", ViewBag.currentSearch as string)</div>
             <input type="submit" value="Filter" />
         </div>
     }
@@ -20,11 +20,14 @@
 <table class="table table-hover table-bordered">
     <thead>
         <tr>
-            <th scope="col">@Html.DisplayNameFor(model => model.Username)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.Email)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.Roles)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.IsDisabled)</th>
-            <th scope="col">Actions</th>
+            @if (Model.Count > 0)
+            {
+                <th scope="col">@Html.DisplayNameFor(model => model[0].Username)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model[0].Email)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model[0].Roles)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model[0].IsDisabled)</th>
+                <th scope="col">Actions</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -44,3 +47,9 @@
         }
     </tbody>
 </table>
+<div>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new { page, search = ViewBag.currentSearch, roleFilter = ViewBag.currentFilter }))
+</div>
