@@ -191,6 +191,10 @@
     <Compile Include="Migrations\202311031426525_UserIsDisabled.designer.cs">
       <DependentUpon>202311031426525_UserIsDisabled.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202311071246054_UpdatedAtNullable.cs" />
+    <Compile Include="Migrations\202311071246054_UpdatedAtNullable.designer.cs">
+      <DependentUpon>202311071246054_UpdatedAtNullable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -335,6 +339,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202311031426525_UserIsDisabled.resx">
       <DependentUpon>202311031426525_UserIsDisabled.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202311071246054_UpdatedAtNullable.resx">
+      <DependentUpon>202311071246054_UpdatedAtNullable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
