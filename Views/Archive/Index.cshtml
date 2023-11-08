@@ -1,0 +1,31 @@
+﻿@model BlogNew.Models.ArchiveTreeModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<ul>
+    @foreach (var y in Model.Years)
+	{
+        <li>@y.Year
+            <ul>
+                @foreach (var m in y.Months)
+                {
+                    <li>@m.Month
+                        <ul>
+                            @foreach (var p in m.Posts)
+                            {
+                                <li>
+                                    <p>
+                                        @p.Title | @p.CreatedAt.ToShortDateString()
+                                    </p>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </li>
+	}
+</ul>
