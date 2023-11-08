@@ -160,10 +160,32 @@ namespace BlogNew.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(/*[Bind(Include = "PostId,UserId,Title,Sinopse,Content,CreatedAt,UpdatedAt,IsPrivate")]*/ Post post)
         {
+
+
             if (ModelState.IsValid)
             {
                 post.UserId = User.Identity.GetUserId();
-                post.Sinopse = post.Content.Length > 256 ? post.Content.Substring(0, 256) : post.Content;
+                int maxLength = 256;
+
+                if (post.Content.Length > maxLength)
+                {
+                    int lastSpace = post.Content.LastIndexOf(' ', maxLength);
+
+                    if (lastSpace != -1)
+                    {
+                        // Trim at the last space within the first 256 characters
+                        post.Sinopse = post.Content.Substring(0, lastSpace);
+                    }
+                    else
+                    {
+                        // No space found within the first 256 characters, so just trim at the character limit
+                        post.Sinopse = post.Content.Substring(0, maxLength);
+                    }
+                }
+                else
+                {
+                    post.Sinopse = post.Content;
+                }
 
                 // Create a detached entity
                 var attachedEntity = new Post { PostId = post.PostId };
@@ -180,6 +202,8 @@ namespace BlogNew.Controllers
 
                 db.SaveChanges();
                 return RedirectToAction("Index");
+
+
             }
             ViewBag.UserId = new SelectList(db.Users, "Id", "Email", post.UserId);
             return View(post);
@@ -269,6 +293,7 @@ namespace BlogNew.Controllers
             }
         }
 
+   
 
 
         private int ThumbsCount(int postId, ApplicationDbContext dbContext)

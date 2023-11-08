@@ -73,8 +73,11 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
+                <button type="button" class="btn btn-warning" onclick="discardChanges()">Discard Changes</button>
             </div>
         </div>
+
+
     </div>
 }
 
@@ -97,5 +100,13 @@
             toolbar: 'undo redo | a11ycheck casechange blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify |' +
                 'bullist numlist checklist outdent indent | removeformat | code table help'
         })
+    </script>
+
+    <script>
+        function discardChanges() {
+            if (confirm("Are you sure you want to discard changes?")) {
+                window.location.href = "@Url.Action("Edit", "Posts", new { id = Model.PostId })";
+            }
+        }
     </script>
 }
