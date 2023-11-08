@@ -49,6 +49,8 @@ namespace BlogNew.Controllers
                 post.Post.ThumbsCount = ThumbsCount(post.Post.PostId, db);
             }
 
+            posts = posts.Where(p => p.Post.IsPrivate == false).ToList();
+
             switch (sortOrder)
             {
                 case "Date":
@@ -62,7 +64,7 @@ namespace BlogNew.Controllers
                     break;
             }
 
-            int pageSize = 4; 
+            int pageSize = 4;
             int pageNumber = (page ?? 1);
 
             return View(posts.Select(p => p.Post).ToPagedList(pageNumber, pageSize));
@@ -102,7 +104,7 @@ namespace BlogNew.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+
                 post.UserId = User.Identity.GetUserId();
                 int maxLength = 256;
 
@@ -123,7 +125,6 @@ namespace BlogNew.Controllers
                 }
                 else
                 {
-                    // Content is already within the limit
                     post.Sinopse = post.Content;
                 }
 
