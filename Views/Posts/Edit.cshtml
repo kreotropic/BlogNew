@@ -81,9 +81,9 @@
     </div>
 }
 
-<div>
+@*<div>
     @Html.ActionLink("Back to List", "Index")
-</div>
+</div>*@
 
 @section Scripts {
 
@@ -102,10 +102,10 @@
         })
     </script>
 
-    <script>
+        <script>
         function discardChanges() {
             if (confirm("Are you sure you want to discard changes?")) {
-                window.location.href = "@Url.Action("Edit", "Posts", new { id = Model.PostId })";
+                window.location.href = "@Url.Action("Index", "Posts")";
             }
         }
     </script>

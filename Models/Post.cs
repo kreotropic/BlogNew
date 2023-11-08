@@ -18,12 +18,10 @@ namespace BlogNew.Models
 
         [Display(Name = "Title")]
         [Required(ErrorMessage = "Please insert the title of the post")]
-        [StringLength(50, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 5)]
+        [StringLength(50, ErrorMessage = "The {0} must be at least {2} characters long and at most {1} characters long.", MinimumLength = 5)]
         public string Title { get; set; }
 
         [Display(Name = "Sinopse")]
-        //[Required(ErrorMessage = "Please insert the description of the post")]
-        //[StringLength(256, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 5)]
         public string Sinopse { get; set; }
 
         [Display(Name = "Content")]

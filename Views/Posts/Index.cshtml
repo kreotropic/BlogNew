@@ -13,6 +13,7 @@
 
 
 <div class="row">
+
     @using (Html.BeginForm())
     {
         <p>
@@ -47,13 +48,13 @@
                                 {
                                     @Html.AntiForgeryToken()
                                     <button type="button" class="btn thumbs-up-btn" data-post-id="@item.PostId">
-                                        <i class="bi bi-hand-thumbs-up-fill"></i> <span class="thumbs-count">@item.ThumbsCount</span>
+                                        <i class="thumb_icon bi bi-hand-thumbs-up"></i> <span class="thumbs-count">@item.ThumbsCount</span>
                                     </button>
                                 }
                             }
                             else
                             {
-                                <i class="bi bi-hand-thumbs-up-fill"></i> <span class="thumbs-count">@item.ThumbsCount</span>
+                                <i class="thumb_icon bi bi-hand-thumbs-up"></i> <span class="thumbs-count">@item.ThumbsCount</span>
                             }
                         </div>
 
@@ -92,6 +93,7 @@
                 $(".thumbs-up-btn").click(function () {
                     var postId = $(this).data("post-id");
                     var counterElement = $(this).closest('.card-body').find(".thumbs-count");
+                    var thumbIcon = $(this).find(".thumb_icon");
 
                     $.ajax({
                         type: "POST",
@@ -101,20 +103,28 @@
                             __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
                         },
                         success: function (data) {
-
                             counterElement.text(data.ThumbsCount);
+
+                            if (data.AlreadyThumbed) {
+                                thumbIcon.removeClass("bi-hand-thumbs-up-fill");
+                                thumbIcon.addClass("bi-hand-thumbs-up");
+                            } else {
+                                thumbIcon.removeClass("bi-hand-thumbs-up");
+                                thumbIcon.addClass("bi-hand-thumbs-up-fill");
+                            }
                         },
                         dataType: 'json',
                         error: function (error) {
                             console.error("Error during Thumbs Up:", error);
                         }
                     });
-
                 });
             });
-        </script>
 
-    
+        </script>
     }
+
+
+
 
 </div>

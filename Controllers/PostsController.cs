@@ -280,20 +280,20 @@ namespace BlogNew.Controllers
 
                     db.SaveChanges();
 
-                    return Json(new { ThumbsCount = post?.ThumbsCount ?? 0 });
+                    return Json(new { ThumbsCount = post?.ThumbsCount ?? 0, AlreadyThumbed = alreadyThumbed });
                 }
                 else
                 {
-                    return Json(new { ThumbsCount = 0, Error = "Post not found" });
+                    return Json(new { ThumbsCount = 0, AlreadyThumbed = false, Error = "Post not found" });
                 }
             }
             catch (Exception ex)
             {
-                return Json(new { ThumbsCount = 0, Error = ex.Message });
+                return Json(new { ThumbsCount = 0, AlreadyThumbed = false, Error = ex.Message });
             }
         }
 
-   
+
 
 
         private int ThumbsCount(int postId, ApplicationDbContext dbContext)
