@@ -4,13 +4,23 @@
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <link href="~/Content/style.css" rel="stylesheet" type="text/css" />
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
+<style>
+    .title {
+        text-decoration: none;
+        color: #4A4A4A;
+        transition: color 0.3s ease;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+</style>
 
 @{
-    ViewBag.Title = "PostsList";
+    ViewBag.Title = "Home Pag";
 }
 
-
+@*{
+    ViewBag.Title = "Home Page";
+}*@
 
 <div class="row">
 
@@ -22,20 +32,19 @@
         </p>
     }
 
-    <table class="table">
-        <tr>
-            <th>
-                @Html.ActionLink("Created At", "Index", new { sortOrder = ViewBag.DateSortParm })
-            </th>
-            <th></th>
-        </tr>
+    <div class="table">
+
+        <div>
+            @Html.ActionLink("Created At", "Index", new { sortOrder = ViewBag.DateSortParm })
+        </div>
+
 
         @foreach (var item in Model)
         {
             <div class="container">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h5 class="card-title">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark" })</h5>
+                        <h5 class="card-title">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark title" })</h5>
                         <p class="card-text">@Html.Raw(item.Sinopse) ...>></p>
                         <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
 
@@ -81,7 +90,7 @@
             </div>
         }
 
-    </table>
+    </div>
 
     <div class="pagination-container">
         @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
