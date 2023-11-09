@@ -1,31 +1,53 @@
 ﻿@model BlogNew.Models.ArchiveTreeModel
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Archive";
 }
 
-<h2>Index</h2>
+<h2 class="my-5">Archive</h2>
 
-<ul>
+<div class="accordion" id="accordionYears">
     @foreach (var y in Model.Years)
-	{
-        <li>@y.Year
-            <ul>
-                @foreach (var m in y.Months)
-                {
-                    <li>@m.Month
-                        <ul>
-                            @foreach (var p in m.Posts)
-                            {
-                                <li>
-                                    <p>
-                                        @p.Title | @p.CreatedAt.ToShortDateString()
-                                    </p>
-                                </li>
-                            }
-                        </ul>
-                    </li>
-                }
-            </ul>
-        </li>
-	}
-</ul>
+    {
+        int year = y.Year;
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="@string.Format("heading{0}",year)">
+                <button class="accordion-button gap-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="@string.Format("#collapse{0}",year)" aria-expanded="false" aria-controls="@string.Format("collapse{0}",year)">
+                    <span>@year</span>
+                    <span class="badge rounded-pill text-bg-primary">@y.TotalPosts</span>
+                </button>
+            </h2>
+            <div id="@string.Format("collapse{0}",year)" class="accordion-collapse collapse" aria-labelledby="@string.Format("heading{0}",year)">
+                <div class="accordion-body">
+                    <div class="accordion" id="accordionMonths">
+                        @foreach (var m in y.Months)
+                        {
+                            string month = m.Month;
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="@string.Format("heading{0}{1}",year,month)">
+                                    <button class="accordion-button gap-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="@string.Format("#collapse{0}{1}",year,month)" aria-expanded="false" aria-controls="@string.Format("collapse{0}{1}",year,month)">
+                                        <span>@month</span>
+                                        <span class="badge rounded-pill text-bg-success">@m.TotalPosts</span>
+                                    </button>
+                                </h2>
+                                <div id="@string.Format("collapse{0}{1}",year,month)" class="accordion-collapse collapse" aria-labelledby="@string.Format("heading{0}{1}",year,month)">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            @foreach (var p in m.Posts)
+                                            {
+                                                <li class="list-group-item list-group-item-action">
+                                                    @Html.ActionLink(p.Title, "Details", "Posts", new { id = p.Id }, new { @class = "link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

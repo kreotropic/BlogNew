@@ -20,6 +20,6 @@ textarea {
     resize:vertical,horizontal;
 }
 
-
-
-
+.accordion-button::after {
+    flex-shrink: 1 !important;
+}
