@@ -298,6 +298,12 @@ namespace BlogNew.Controllers
 
 
 
+
+
+
+
+
+
         private int ThumbsCount(int postId, ApplicationDbContext dbContext)
         {
             return dbContext.Thumbs.Count(t => t.PostId == postId);
