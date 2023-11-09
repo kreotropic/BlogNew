@@ -7,6 +7,10 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BlogNew.Models;
+using System.Net;
+using System.Collections.Generic;
+using System.Web.Services.Description;
+using PagedList;
 
 namespace BlogNew.Controllers
 {
@@ -333,7 +337,21 @@ namespace BlogNew.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        //Manage current http context user's posts
+        public ActionResult Posts(string search, int page = 1)
+        {
+            const int PageSize = 10;
+            string userId = User.Identity.GetUserId();
+            if (userId == null) 
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var list = GetPosts(userId);
+            
+            return View(list.ToPagedList(page, PageSize));
+        }
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -371,6 +389,23 @@ namespace BlogNew.Controllers
                 return user.PhoneNumber != null;
             }
             return false;
+        }
+
+        private List<ManagePostViewModel> GetPosts(string userId)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                return db.Posts.Where(p => p.UserId == userId)
+                    .OrderBy(p => p.CreatedAt)
+                    .Select(p => new ManagePostViewModel
+                    {
+                        PostId = p.PostId,
+                        Title = p.Title,
+                        CreatedAt = p.CreatedAt,
+                        Private = p.IsPrivate, 
+                        Thumbs = db.Thumbs.Count(t => t.PostId == p.PostId),
+                    }).ToList();
+            }
         }
 
         public enum ManageMessageId

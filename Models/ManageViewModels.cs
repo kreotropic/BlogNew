@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
@@ -82,5 +83,15 @@ namespace BlogNew.Models
     {
         public string SelectedProvider { get; set; }
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+    }
+
+    public class ManagePostViewModel
+    {
+        public int PostId { get; set; }
+        public string Title { get; set; }
+        [Display(Name = "Created")]
+        public DateTime CreatedAt { get; set; }  
+        public bool Private { get; set; }  
+        public int Thumbs { get; set; }  
     }
 }

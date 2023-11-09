@@ -1,0 +1,54 @@
+﻿@model PagedList.IPagedList<BlogNew.Models.ManagePostViewModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Manage Posts";
+}
+
+<h2 class="my-5">Manage Your Posts</h2>
+
+<div class="mb-4 d-flex justify-content-between">
+    @using (Html.BeginForm("Posts", "Manage", FormMethod.Get))
+    {
+        <div class="d-flex gap-2">
+            <div><span>Title: </span>@Html.TextBox("search", ViewBag.currentSearch as string)</div>
+            <input type="submit" value="Filter" />
+        </div>
+    }
+    <div class="mb-3">@Html.ActionLink("New Post", "Create", "Posts", null, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })</div>
+</div>
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            @if (Model.Count > 0)
+            {
+                <th scope="col">@Html.DisplayNameFor(model => model[0].Title)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model[0].Thumbs)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model[0].CreatedAt)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model[0].Private)</th>
+                <th scope="col">Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td scope="row">@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Thumbs)</td>
+                <td>@item.CreatedAt.ToShortDateString()</td>
+                <td>@Html.DisplayFor(modelItem => item.Private)</td>
+                <td>
+                    @Html.ActionLink("Details", "Details", "Posts", new { id = item.PostId }, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" }) |
+                    @Html.ActionLink("Edit", "Edit", "Posts", new { id = item.PostId }, new { @class = "link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" }) |
+                    @Html.ActionLink("Delete", "Delete", "Posts", new { id = item.PostId }, new { @class = "link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new { page, search = ViewBag.currentSearch}))
+</div>

@@ -69,4 +69,10 @@ namespace BlogNew.Models
         public List<SelectListItem> SelectRoles { get; set; } = new List<SelectListItem>();
     }
 
+    public class UserProfileViewModel
+    {
+        public string Username { get; set; }
+        public List<Post> Posts { get; set; }
+    }
+
 }
