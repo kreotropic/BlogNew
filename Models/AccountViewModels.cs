@@ -5,9 +5,9 @@ namespace BlogNew.Models
 {
     public class ExternalLoginConfirmationViewModel
     {
-        [Required]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "Username is required.")]
+        [Display(Name = "Username")]
+        public string UserName { get; set; }
     }
 
     public class ExternalLoginListViewModel
