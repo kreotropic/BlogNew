@@ -19,7 +19,3 @@ textarea {
     max-width: 280px;
     resize:vertical,horizontal;
 }
-
-.accordion-button::after {
-    flex-shrink: 1 !important;
-}
