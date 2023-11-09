@@ -8,6 +8,7 @@ namespace BlogNew.Models
     public class ArchiveYearModel
     {
         public int Year { get; set; }
+        public int TotalPosts { get; set; }
         public List<ArchiveMonthModel> Months { get; set; } = new List<ArchiveMonthModel>();    
     }
 }

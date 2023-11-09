@@ -16,13 +16,13 @@ namespace BlogNew.Controllers
         public ActionResult Index()
         {
             var tree = GetArchiveTree();
-
+            
             return View(tree);
         }
         private ArchiveTreeModel GetArchiveTree()
         {
             List<Post> posts = GetOrderedPosts();
-            //if (posts == null || posts.Count == 0) return null;
+            if (posts == null || posts.Count == 0) return new ArchiveTreeModel();
 
             var tree = new ArchiveTreeModel();
 
@@ -32,8 +32,8 @@ namespace BlogNew.Controllers
             for (int i = 1; i < posts.Count; i++)
             {
                 //gets years of current and previously added post
-                var currentYear = posts[i].CreatedAt.Year;
-                var previousYear = posts[i-1].CreatedAt.Year;
+                int currentYear = posts[i].CreatedAt.Year;
+                int previousYear = posts[i-1].CreatedAt.Year;
 
                 if (currentYear != previousYear)
                 {
@@ -43,8 +43,8 @@ namespace BlogNew.Controllers
                 }
 
                 //gets months of current and previously added post
-                var currentMonth = posts[i].CreatedAt.Year;
-                var previousMonth = posts[i - 1].CreatedAt.Year;
+                int currentMonth = posts[i].CreatedAt.Month;
+                int previousMonth = posts[i - 1].CreatedAt.Month;
 
                 if (currentMonth != previousMonth)
                 {
@@ -104,8 +104,10 @@ namespace BlogNew.Controllers
             postNode.Title = post.Title;
             postNode.CreatedAt = post.CreatedAt;
 
-            //adds post node to last month node that is a child of the last year node
+            //adds post node to last month node that is a child of the last year node.
+            //Also increments Total number of posts for that year :)
             int lastYearIndex = tree.Years.Count - 1;
+            tree.Years[lastYearIndex].TotalPosts++;
             int lastMonthIndex = tree.Years[lastYearIndex].Months.Count - 1;
             tree.Years[lastYearIndex].Months[lastMonthIndex].Posts.Add(postNode);
         }
