@@ -1,13 +1,12 @@
 ﻿@model PagedList.IPagedList<BlogNew.Models.UserViewModel>
 @using PagedList.Mvc;
 @{
-    ViewBag.Title = "Users";
+    ViewBag.Title = "Manage Users";
 }
 
-<h2 class="mb-3">Users</h2>
+<h2 class="my-5">Manage Users</h2>
 
-<div class="mb-3">
-    <div class="mb-3">@Html.ActionLink("Create New", "Create")</div>
+<div class="mb-4 d-flex justify-content-between">
     @using (Html.BeginForm("Index", "Users", FormMethod.Get))
     {
         <div class="d-flex gap-2">
@@ -16,6 +15,7 @@
             <input type="submit" value="Filter" />
         </div>
     }
+    <div class="mb-3">@Html.ActionLink("New User", "Create", null, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })</div>
 </div>
 <table class="table table-hover table-bordered">
     <thead>
@@ -39,9 +39,9 @@
                 <td>@Html.DisplayFor(modelItem => item.Roles)</td>
                 <td>@Html.DisplayFor(modelItem => item.IsDisabled)</td>
                 <td>
-                    @Html.ActionLink("Details", "Details", new { id = item.UserId }) |
-                    @Html.ActionLink("Edit", "Edit", new { id = item.UserId }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.UserId })
+                    @Html.ActionLink("Details", "Details", new { id = item.UserId }, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = item.UserId }, new { @class = "link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.UserId }, new { @class = "link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
                 </td>
             </tr>
         }
