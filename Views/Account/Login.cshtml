@@ -7,9 +7,7 @@
 
 <style>
 
-    .form-group {
-        margin-bottom: 1rem;
-    }
+
 
     .form-control {
         margin: auto;
@@ -17,14 +15,7 @@
         display: inline;
     }
 
-    button {
-        width: 350px;
-    }
 
-    h4 {
-        margin-bottom: 1rem;
-        width: 350px;
-    }
 
     #loginForm .form-check .form-check-input {
         float: none; /* Reset the float property */
@@ -34,11 +25,14 @@
 
 <main aria-labelledby="title">
 
-    
-    <h2 class="text-primary  text-center ">USE A LOCAL ACCOUNT TO</h2>
-    <h2 class="text-primary mb-3 text-center"> LOGIN</h2>
 
-    <div class="mx-auto p-4 card" style="width: 400px;">
+
+
+    <div class="mx-auto p-4 card" style="width: 400px; background-color:#ede9e9">
+
+        <h4 class="text-center">Use a local account to login</h4>
+        <hr />
+
         <section id="loginForm">
 
 
@@ -84,7 +78,7 @@
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block mb-5 fs-3">Sign in</button>
+                    <button type="submit" class="btn btn-primary btn-block mb-5 fs-3 " style="width:350px">Sign in</button>
                 </div>
 
                 <p class="text-center">
@@ -94,15 +88,15 @@
         </section>
 
 
-        <div class="">
-            <p class=" text-center">
-                Or signup with:
 
-                <section id="socialLoginForm">
-                    @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-                </section>
-            </p>
-        </div>
+        <p class=" text-center">
+            Or signup with:
+
+            <section class=" text-center" id="socialLoginForm">
+                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+            </section>
+        </p>
+
 
 
     </div>

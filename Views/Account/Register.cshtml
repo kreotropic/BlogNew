@@ -3,45 +3,81 @@
     ViewBag.Title = "Register";
 }
 
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
 
-    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
-    {
-        @Html.AntiForgeryToken()
-        <h4>Create a new account.</h4>
-        <hr />
-        @Html.ValidationSummary("", new { @class = "text-danger" })
-        <div class="row mb-md-2">
-            @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="row mb-md-2">
-            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="row mb-md-2">
-            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="row mb-3 mb-md-2">
-            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="row">
-            <div class="offset-md-2 col-md-10">
-                <input type="submit" value="Register" class="btn btn-outline-dark" />
-            </div>
-        </div>
+
+<style>
+
+
+
+    .form-control {
+        margin: auto;
+        max-width: 350px;
+        display: inline;
     }
+
+    input, select, textarea {
+        max-width: 350px;
+  
+    }
+
+</style>
+
+
+
+<main aria-labelledby="title">
+
+    <div class="mx-auto p-4 card" style="width: 400px; background-color:#ede9e9">
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+
+
+            <h4 class="text-center">Create a new account.</h4>
+            <hr />
+
+
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+
+
+            <div class="form-floating mb-3">
+                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @id = "username", @placeholder = "username" })
+                <label class="form-label" for="username">Username</label>
+                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+            </div>
+
+
+
+            <div class="form-floating mb-3">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @id = "email", @placeholder = "Email" })
+                <label class="form-label" for="email">Email</label>
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+
+
+
+            <div class="form-floating mb-3">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", @id = "password", @placeholder = "Password" })
+                <label class="form-label" for="password">Password</label>
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+
+
+
+            <div class="form-floating mb-5">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @id = "cPassword", @placeholder = "cpassword" })
+                <label class="form-label" for="cPassword">Confirm Password</label>
+                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+
+
+
+            <div class="from-group text-center mt-2">
+                <input type="submit" value="Register" class="btn btn-primary btn-block mb-5 fs-3" style="width:350px"  />
+            </div>
+        }
+
+    </div>
 </main>
 
 @section Scripts {
