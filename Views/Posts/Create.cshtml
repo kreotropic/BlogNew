@@ -15,6 +15,10 @@ max-width: 100% ;
         background-color: #ff6a00;
     }
 
+    #UserName{
+max-width: 100% ;
+        background-color: #ff6a00;
+    } 
 
 </style>
 
@@ -30,7 +34,7 @@ max-width: 100% ;
 
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="row">
+        <div class="row ">
             <div class="col-md-12 mx-auto ">
                 <div class="form-group">
                     @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })

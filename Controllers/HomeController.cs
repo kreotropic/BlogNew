@@ -14,8 +14,8 @@ namespace BlogNew.Controllers
         public ActionResult Index()
         {
             //return view to Posts index
-            return RedirectToAction("Index", "Posts");
             //return View();
+            return RedirectToAction("Index", "Posts");
         }
 
         public ActionResult About()
