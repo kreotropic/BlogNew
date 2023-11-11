@@ -19,7 +19,7 @@ namespace BlogNew.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        const int PageSize = 3;
+        const int PageSize = 10;
 
         public ManageController()
         {
