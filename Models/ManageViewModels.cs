@@ -93,5 +93,6 @@ namespace BlogNew.Models
         public DateTime CreatedAt { get; set; }  
         public bool Private { get; set; }  
         public int Thumbs { get; set; }  
+        public string Author { get; set; }
     }
 }

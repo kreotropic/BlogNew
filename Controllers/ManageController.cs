@@ -11,6 +11,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Web.Services.Description;
 using PagedList;
+using System.Drawing;
 
 namespace BlogNew.Controllers
 {
@@ -19,7 +20,7 @@ namespace BlogNew.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        const int PageSize = 10;
+        const int PageSize = 3;
 
         public ManageController()
         {
@@ -338,6 +339,34 @@ namespace BlogNew.Controllers
             base.Dispose(disposing);
         }
 
+        [Authorize(Roles = "Admin")]
+        public ActionResult PostsAdmin(string searchTitle, string searchUser, string sortOrder, int page = 1)
+        {
+            //Add current search and sort parameters to view bag because of paginated returns
+            ViewBag.currentTitleSearch = searchTitle;
+            ViewBag.currentUserSearch = searchUser;
+            ViewBag.currentSort = sortOrder;
+
+            //Define sort argument in view to the reverse order of current argument.
+            //So that next time there is a click in the same column it reverses the order.
+            ViewBag.ThumbsSortArg = sortOrder == "thumbs_desc" ? "thumbs_asc" : "thumbs_desc";
+            ViewBag.PrivateSortArg = sortOrder == "private" ? "public" : "private";
+
+            //Validation necessary because by default list is ordered by date descending 
+            if (String.IsNullOrEmpty(sortOrder))
+            {
+                ViewBag.DateSortArg = "date_asc";
+            }
+            else
+            {
+                ViewBag.DateSortArg = sortOrder == "date_desc" ? "date_asc" : "date_desc";
+            }
+
+            var list = GetAllPosts(sortOrder, searchTitle, searchUser);
+
+            return View(list.ToPagedList(page, PageSize));
+        }
+
         //Manage current http context user's posts
         public ActionResult Posts(string search, string sortOrder, int page = 1)
         {
@@ -426,6 +455,20 @@ namespace BlogNew.Controllers
             return string.Format("&search={0}", currentSearch);
         }
 
+        public static string AppendSearchRouteValue(string currentTitleSearch, string currentUserSearch)
+        {
+            string value = "";
+            if (!string.IsNullOrWhiteSpace(currentTitleSearch))
+            {
+                value += string.Format("&searchTitle={0}", currentTitleSearch);
+            }
+            if (!string.IsNullOrWhiteSpace(currentUserSearch))
+            {
+                value += string.Format("&searchUser={0}", currentUserSearch);
+            }
+            return value;
+        }
+
         private List<ManagePostViewModel> GetPosts(string userId, string sortOrder, string search)
         {
             using (var db = new ApplicationDbContext())
@@ -476,6 +519,110 @@ namespace BlogNew.Controllers
                         break;
                     default:
                         posts = query2.OrderByDescending(p => p.CreatedAt).ToList();
+                        break;
+                }
+
+                return posts;
+            }
+        }
+
+        private IQueryable<ManagePostViewModel> SetAdminQuery(string searchTitle, string searchUser, ApplicationDbContext db)
+        {
+            if (!string.IsNullOrWhiteSpace(searchTitle))
+            {
+                if (!string.IsNullOrWhiteSpace(searchUser))
+                {
+                    return from p in db.Posts
+                           join u in db.Users on p.UserId equals u.Id
+                           where p.Title.Contains(searchTitle)
+                           && u.UserName.Contains(searchUser)
+                           select new ManagePostViewModel
+                           {
+                               PostId = p.PostId,
+                               Title = p.Title,
+                               CreatedAt = p.CreatedAt,
+                               Private = p.IsPrivate,
+                               Thumbs = db.Thumbs.Count(t => t.PostId == p.PostId),
+                               Author = u.UserName
+                            };
+                }
+                else
+                {
+                    return from p in db.Posts
+                            join u in db.Users on p.UserId equals u.Id
+                            where p.Title.Contains(searchTitle)
+                           select new ManagePostViewModel
+                             {
+                                 PostId = p.PostId,
+                                 Title = p.Title,
+                                 CreatedAt = p.CreatedAt,
+                                 Private = p.IsPrivate,
+                                 Thumbs = db.Thumbs.Count(t => t.PostId == p.PostId),
+                                 Author = u.UserName
+                             };
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(searchUser))
+                {
+                    return from p in db.Posts
+                             join u in db.Users on p.UserId equals u.Id
+                             where u.UserName.Contains(searchUser)
+                           select new ManagePostViewModel
+                             {
+                                 PostId = p.PostId,
+                                 Title = p.Title,
+                                 CreatedAt = p.CreatedAt,
+                                 Private = p.IsPrivate,
+                                 Thumbs = db.Thumbs.Count(t => t.PostId == p.PostId),
+                                 Author = u.UserName
+                             };
+                }
+                else
+                {
+                    return from p in db.Posts
+                             join u in db.Users on p.UserId equals u.Id
+                             select new ManagePostViewModel
+                             {
+                                 PostId = p.PostId,
+                                 Title = p.Title,
+                                 CreatedAt = p.CreatedAt,
+                                 Private = p.IsPrivate,
+                                 Thumbs = db.Thumbs.Count(t => t.PostId == p.PostId),
+                                 Author = u.UserName
+                             };
+                }
+            }
+        }
+
+        private List<ManagePostViewModel> GetAllPosts(string sortOrder, string searchTitle, string searchUser)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var query = SetAdminQuery(searchTitle, searchUser, db);
+
+                List<ManagePostViewModel> posts;
+                //executes query with sort
+                switch (sortOrder)
+                {
+                    case "thumbs_asc":
+                        posts = query.OrderBy(p => p.Thumbs).ToList();
+                        break;
+                    case "thumbs_desc":
+                        posts = query.OrderByDescending(p => p.Thumbs).ToList();
+                        break;
+                    case "private":
+                        posts = query.OrderByDescending(p => p.Private).ToList();
+                        break;
+                    case "public":
+                        posts = query.OrderBy(p => p.Private).ToList();
+                        break;
+                    case "date_asc":
+                        posts = query.OrderBy(p => p.CreatedAt).ToList();
+                        break;
+                    default:
+                        posts = query.OrderByDescending(p => p.CreatedAt).ToList();
                         break;
                 }
 

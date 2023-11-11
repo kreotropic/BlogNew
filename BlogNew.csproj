@@ -307,6 +307,7 @@
     <Content Include="Views\Posts\Index.cshtml" />
     <Content Include="Views\Archive\Index.cshtml" />
     <Content Include="Views\Manage\Posts.cshtml" />
+    <Content Include="Views\Manage\PostsAdmin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,67 @@
+﻿@model PagedList.IPagedList<BlogNew.Models.ManagePostViewModel>
+@using PagedList.Mvc;
+@using BlogNew.Controllers;
+@{
+    ViewBag.Title = "Manage All Posts";
+}
+
+<h2 class="my-5">Manage All Posts</h2>
+
+<div class="mb-4 d-flex justify-content-between">
+    @using (Html.BeginForm("PostsAdmin", "Manage", FormMethod.Get))
+    {
+        <div class="d-flex gap-2">
+            <div><span>Author: </span>@Html.TextBox("searchUser", ViewBag.currentUserSearch as string)</div>
+            <div><span>Title: </span>@Html.TextBox("searchTitle", ViewBag.currentTitleSearch as string)</div>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.currentSort))
+            {
+                <input name="sortOrder" type="hidden" value="@ViewBag.currentSort">
+            }
+            <input type="submit" value="Filter" />
+        </div>
+    }
+</div>
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            @if (Model.Count > 0)
+            {
+                <th scope="col">@Html.DisplayNameFor(model => model[0].Author)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model[0].Title)</th>
+                <th scope="col">
+                    <a class="text-decoration-none" href=@string.Format("/Manage/PostsAdmin?sortOrder={0}{1}", ViewBag.ThumbsSortArg, ManageController.AppendSearchRouteValue(ViewBag.currentTitleSearch, ViewBag.currentUserSearch))>Thumbs @ManageController.SetSortOrderIcon("thumbs", ViewBag.currentSort)</a>
+                </th>
+                <th scope="col">
+                    <a class="text-decoration-none" href=@string.Format("/Manage/PostsAdmin?sortOrder={0}{1}", ViewBag.DateSortArg, ManageController.AppendSearchRouteValue(ViewBag.currentTitleSearch, ViewBag.currentUserSearch))>Created @ManageController.SetSortOrderIcon("date", ViewBag.currentSort)</a>
+                </th>
+                <th scope="col">
+                    <a class="text-decoration-none" href=@string.Format("/Manage/PostsAdmin?sortOrder={0}{1}", ViewBag.PrivateSortArg, ManageController.AppendSearchRouteValue(ViewBag.currentTitleSearch, ViewBag.currentUserSearch))>Private @ManageController.SetPrivacyIcon(ViewBag.currentSort)</a>
+                </th>
+                <th scope="col">Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td scope="row">@Html.DisplayFor(modelItem => item.Author)</td>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Thumbs)</td>
+                <td>@item.CreatedAt.ToShortDateString()</td>
+                <td>@Html.DisplayFor(modelItem => item.Private)</td>
+                <td>
+                    @Html.ActionLink("Details", "Details", "Posts", new { id = item.PostId }, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" }) |
+                    @Html.ActionLink("Edit", "Edit", "Posts", new { id = item.PostId }, new { @class = "link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" }) |
+                    @Html.ActionLink("Delete", "Delete", "Posts", new { id = item.PostId }, new { @class = "link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("PostsAdmin",
+        new { page, searchTitle = ViewBag.currentTitleSearch, searchUser = ViewBag.currentUserSearch, sortOrder = ViewBag.currentSort }))
+</div>
