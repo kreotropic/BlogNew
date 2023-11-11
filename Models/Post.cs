@@ -13,6 +13,7 @@ namespace BlogNew.Models
        
         public int PostId { get; set; }
 
+        [ForeignKey("User")]
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
 
@@ -26,7 +27,7 @@ namespace BlogNew.Models
 
         [Display(Name = "Content")]
         [Required(ErrorMessage = "Please insert the content of the post")]
-        [StringLength(5000, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 100)]
+        [StringLength(500000, ErrorMessage = "The {0} must be at least {2} characters long and at most {1} characters long ", MinimumLength = 100)]
         [DataType(DataType.MultilineText)]
         [AllowHtml]
         public string Content { get; set; }

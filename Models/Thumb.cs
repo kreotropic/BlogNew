@@ -9,6 +9,8 @@ namespace BlogNew.Models
 {
     public class Thumb
     {
+
+
         [Key]
         public int ThumbId { get; set; }
 

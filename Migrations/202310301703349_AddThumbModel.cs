@@ -12,8 +12,8 @@
                 c => new
                     {
                         ThumbId = c.Int(nullable: false, identity: true),
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        PostId = c.Int(nullable: false),
+                        UserId = c.String(nullable:true, maxLength: 128),
+                        PostId = c.Int(nullable: true),
                         CreatedAt = c.DateTime(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false),
                     })
