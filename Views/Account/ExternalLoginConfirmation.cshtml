@@ -2,35 +2,59 @@
 @{
     ViewBag.Title = "Register";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>Associate your @ViewBag.LoginProvider account.</h3>
 
-    @using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
-    {
-        @Html.AntiForgeryToken()
 
-        <h4>Association Form</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <p class="text-info">
-            You've successfully authenticated with <strong>@ViewBag.LoginProvider</strong>.
-            Please enter a user name for this site below and click the Register button to finish
-            logging in.
-        </p>
-        <div class="row">
-            @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="row">
-            <div class="offset-md-2 col-md-10">
-                <input type="submit" class="btn btn-outline-dark" value="Register" />
-            </div>
-        </div>
+<style>
+
+
+
+    .form-control {
+        margin: auto;
+        max-width: 350px;
+        display: inline;
     }
+
+    input, select, textarea {
+        max-width: 350px;
+    }
+</style>
+
+
+<main aria-labelledby="title">
+
+
+
+    <div class="mx-auto p-4 card" style="width: 400px; background-color:#ede9e9">
+
+
+        @using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <p class="text-info">
+                You've successfully authenticated with <strong>@ViewBag.LoginProvider</strong>.
+                Please enter a user name for this site below and click the Register button to finish
+                logging in.
+            </p>
+
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+
+    <div class="form-floating mb-3">
+        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @id = "username", @placeholder = "Email" })
+        <label class="form-label" for="username">Username</label>
+        @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+
+    </div>
+
+
+            <div class="from-group text-center mt-2">
+                <input type="submit" class="btn btn-primary btn-block mb-5 fs-3" style="width:350px" value="Register" />
+            </div>
+        }
+
+    </div>
 </main>
 
 @section Scripts {
