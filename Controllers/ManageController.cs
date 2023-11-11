@@ -19,6 +19,7 @@ namespace BlogNew.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        const int PageSize = 3;
 
         public ManageController()
         {
@@ -338,20 +339,150 @@ namespace BlogNew.Controllers
         }
 
         //Manage current http context user's posts
-        public ActionResult Posts(string search, int page = 1)
+        public ActionResult Posts(string search, string sortOrder, int page = 1)
         {
-            const int PageSize = 10;
             string userId = User.Identity.GetUserId();
             if (userId == null) 
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var list = GetPosts(userId);
-            
+            //Add current search and sort parameters to view bag because of paginated returns
+            ViewBag.currentSearch = search;
+            ViewBag.currentSort = sortOrder;
+
+            //Define sort argument in view to the reverse order of current argument.
+            //So that next time there is a click in the same column it reverses the order.
+            ViewBag.ThumbsSortArg = sortOrder == "thumbs_desc" ? "thumbs_asc" : "thumbs_desc";
+            ViewBag.PrivateSortArg = sortOrder == "private" ? "public" : "private";
+
+            //Validation necessary because by default list is ordered by date descending 
+            if (String.IsNullOrEmpty(sortOrder))
+            {
+                ViewBag.DateSortArg = "date_asc";
+            }
+            else
+            {
+                ViewBag.DateSortArg = sortOrder == "date_desc" ? "date_asc" : "date_desc";
+            }
+
+            var list = GetPosts(userId, sortOrder, search);
+
             return View(list.ToPagedList(page, PageSize));
         }
+
         #region Helpers
+        public static HtmlString SetSortOrderIcon(string colHeader, string currentSort)
+        {
+            if (string.IsNullOrWhiteSpace(currentSort))
+            {
+                return null;
+            }
+
+            if (colHeader != currentSort.Substring(0, colHeader.Length))
+            {
+                return null;
+            }
+
+            const string UpArrow = "&#x25B2";
+            const string DownArrow = "&#x25BC";
+
+            string asc = currentSort.Substring(currentSort.Length - 3);
+
+            if (asc == "asc")
+            {
+                return new HtmlString(string.Format("<span>{0}</span>", UpArrow));
+            }
+
+            return new HtmlString(string.Format("<span>{0}</span>", DownArrow));
+        }
+
+        public static HtmlString SetPrivacyIcon(string currentSort)
+        {
+            if (string.IsNullOrWhiteSpace(currentSort))
+            {
+                return null;
+            }
+
+            if (currentSort == "private")
+            {
+                return new HtmlString("<i class=\"bi bi-eye-slash-fill\"></i>");
+            }
+
+            if (currentSort == "public")
+            {
+                return new HtmlString("<i class=\"bi bi-eye-fill\"></i>");
+            }
+
+            return null;
+        }
+
+        public static string AppendSearchRouteValue(string currentSearch)
+        {
+            if (string.IsNullOrWhiteSpace(currentSearch))
+            {
+                return null;
+            }
+            return string.Format("&search={0}", currentSearch);
+        }
+
+        private List<ManagePostViewModel> GetPosts(string userId, string sortOrder, string search)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                //query declarations. When executed in the switch case below they return list of ManagePostViewModel objects created from db data
+                IQueryable<Post> query1;
+                if (string.IsNullOrWhiteSpace(search))
+                {
+                    query1 = from p in db.Posts
+                             where p.UserId == userId
+                             select p;
+                }
+                else
+                {
+                    query1 = from p in db.Posts
+                             where p.UserId == userId 
+                             && p.Title.Contains(search)
+                             select p;
+                }
+
+                var query2 = query1.Select(p => new ManagePostViewModel
+                {
+                    PostId = p.PostId,
+                    Title = p.Title,
+                    CreatedAt = p.CreatedAt,
+                    Private = p.IsPrivate,
+                    Thumbs = db.Thumbs.Count(t => t.PostId == p.PostId),
+                });
+
+                List<ManagePostViewModel> posts;
+                //executes query with sort
+                switch (sortOrder)
+                {
+                    case "thumbs_asc":
+                        posts = query2.OrderBy(p => p.Thumbs).ToList();
+                        break;
+                    case "thumbs_desc":
+                        posts = query2.OrderByDescending(p => p.Thumbs).ToList();
+                        break;
+                    case "private":
+                        posts = query2.OrderByDescending(p => p.Private).ToList();
+                        break;
+                    case "public":
+                        posts = query2.OrderBy(p => p.Private).ToList();
+                        break;
+                    case "date_asc":
+                        posts = query2.OrderBy(p => p.CreatedAt).ToList();
+                        break;
+                    default:
+                        posts = query2.OrderByDescending(p => p.CreatedAt).ToList();
+                        break;
+                }
+
+                return posts;
+            }
+        }
+
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -391,22 +522,6 @@ namespace BlogNew.Controllers
             return false;
         }
 
-        private List<ManagePostViewModel> GetPosts(string userId)
-        {
-            using (var db = new ApplicationDbContext())
-            {
-                return db.Posts.Where(p => p.UserId == userId)
-                    .OrderBy(p => p.CreatedAt)
-                    .Select(p => new ManagePostViewModel
-                    {
-                        PostId = p.PostId,
-                        Title = p.Title,
-                        CreatedAt = p.CreatedAt,
-                        Private = p.IsPrivate, 
-                        Thumbs = db.Thumbs.Count(t => t.PostId == p.PostId),
-                    }).ToList();
-            }
-        }
 
         public enum ManageMessageId
         {
