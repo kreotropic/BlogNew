@@ -193,9 +193,23 @@ namespace BlogNew.Controllers
 
             if (ModelState.IsValid)
             {
-                post.UserId = User.Identity.GetUserId();
-                int maxLength = 256;
+                //Gets post object from DB
+                Post postDB = db.Posts.Find(post.PostId);
+                if (postDB == null)
+                {
+                    return HttpNotFound();
+                }
+                //If for whatever reason user associated with post is different from current logged in user return error page
+                if (postDB.UserId != User.Identity.GetUserId())
+                {
+                    return View("~/Views/Shared/Error.cshtml");
+                }
 
+                // Create a detached entity
+                db.Posts.Attach(postDB);
+
+                int maxLength = 256;
+                //Updates Sinopse
                 if (post.Content.Length > maxLength)
                 {
                     int lastSpace = post.Content.LastIndexOf(' ', maxLength);
@@ -203,31 +217,24 @@ namespace BlogNew.Controllers
                     if (lastSpace != -1)
                     {
                         // Trim at the last space within the first 256 characters
-                        post.Sinopse = post.Content.Substring(0, lastSpace);
+                        postDB.Sinopse = post.Content.Substring(0, lastSpace);
                     }
                     else
                     {
                         // No space found within the first 256 characters, so just trim at the character limit
-                        post.Sinopse = post.Content.Substring(0, maxLength);
+                        postDB.Sinopse = post.Content.Substring(0, maxLength);
                     }
                 }
                 else
                 {
-                    post.Sinopse = post.Content;
+                    postDB.Sinopse = post.Content;
                 }
 
-                // Create a detached entity
-                var attachedEntity = new Post { PostId = post.PostId };
-                db.Posts.Attach(attachedEntity);
-
-                // Exclude CreatedAt from modification
-                db.Entry(attachedEntity).Property(x => x.CreatedAt).IsModified = false;
-
                 // Update other properties
-                attachedEntity.Title = post.Title;
-                attachedEntity.Content = post.Content;
-                attachedEntity.UpdatedAt = DateTime.UtcNow;
-                attachedEntity.IsPrivate = post.IsPrivate;
+                postDB.Title = post.Title;
+                postDB.Content = post.Content;
+                postDB.UpdatedAt = DateTime.UtcNow;
+                postDB.IsPrivate = post.IsPrivate;
 
                 db.SaveChanges();
                 return RedirectToAction("Index");
