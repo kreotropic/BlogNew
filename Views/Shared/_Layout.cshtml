@@ -23,6 +23,21 @@
                     <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Create post", "Create", "Posts", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Posts list", "Index", "Posts", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>
+                        @using (Html.BeginForm())
+                        {
+                            <div class="align-bottom">
+                                Find by name: @Html.TextBox("SearchString")
+                                <input type="submit" class="btn btn-primary p-1" value="Find" />
+                                @if (ViewBag.NoMoviesFound != null)
+                                {
+                                    @ViewBag.NoMoviesFound
+                                }
+                            </div>
+                        }
+                    </li>
+
+
 
 
                 </ul>
@@ -41,5 +56,20 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    <script>
+    var noMoviesFoundMessage = '@TempData["NoMoviesFound"]';
+    if (noMoviesFoundMessage) {
+        alert(noMoviesFoundMessage);
+    }
+    </script>
+
+    <style>
+
+.
+
+    </style>
+
 </body>
+
 </html>

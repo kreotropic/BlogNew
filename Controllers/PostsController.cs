@@ -34,15 +34,42 @@ namespace BlogNew.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
+            //var posts = (from p in db.Posts
+            //             join u in db.Users on p.UserId equals u.Id
+            //             select new { Post = p, User = u })
+            //            .ToList();
+
+
+
+
+
+            //if (!String.IsNullOrEmpty(searchString))
+            //{
+            //    posts = posts.Where(p => p.User.UserName.Contains(searchString)).ToList();
+            //}
+
+
             var posts = (from p in db.Posts
                          join u in db.Users on p.UserId equals u.Id
                          select new { Post = p, User = u })
-                        .ToList();
+            .ToList();
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                posts = posts.Where(p => p.User.UserName.Contains(searchString)).ToList();
+                posts = posts.Where(p => p.Post.Title.Contains(searchString)).ToList();
+
+                if (posts.Count == 0)
+                {
+                    TempData["NoMoviesFound"] = "No movies were found with the given title.";
+                    return RedirectToAction("Index", "Posts");
+                }
             }
+            else {
+
+                
+
+            }
+
 
             foreach (var post in posts)
             {
