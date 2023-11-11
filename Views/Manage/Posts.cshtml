@@ -1,5 +1,6 @@
 ﻿@model PagedList.IPagedList<BlogNew.Models.ManagePostViewModel>
 @using PagedList.Mvc;
+@using BlogNew.Controllers;
 @{
     ViewBag.Title = "Manage Posts";
 }
@@ -11,6 +12,10 @@
     {
         <div class="d-flex gap-2">
             <div><span>Title: </span>@Html.TextBox("search", ViewBag.currentSearch as string)</div>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.currentSort))
+            {
+                <input name="sortOrder" type="hidden" value="@ViewBag.currentSort">
+            }
             <input type="submit" value="Filter" />
         </div>
     }
@@ -22,9 +27,15 @@
             @if (Model.Count > 0)
             {
                 <th scope="col">@Html.DisplayNameFor(model => model[0].Title)</th>
-                <th scope="col">@Html.DisplayNameFor(model => model[0].Thumbs)</th>
-                <th scope="col">@Html.DisplayNameFor(model => model[0].CreatedAt)</th>
-                <th scope="col">@Html.DisplayNameFor(model => model[0].Private)</th>
+                <th scope="col">
+                    <a class="text-decoration-none" href=@string.Format("/Manage/Posts?sortOrder={0}{1}", ViewBag.ThumbsSortArg, ManageController.AppendSearchRouteValue(ViewBag.currentSearch))>Thumbs @ManageController.SetSortOrderIcon("thumbs", ViewBag.currentSort)</a>
+                </th>
+                <th scope="col">
+                    <a class="text-decoration-none" href=@string.Format("/Manage/Posts?sortOrder={0}{1}", ViewBag.DateSortArg, ManageController.AppendSearchRouteValue(ViewBag.currentSearch))>Created @ManageController.SetSortOrderIcon("date", ViewBag.currentSort)</a>
+                </th>
+                <th scope="col">
+                    <a class="text-decoration-none" href=@string.Format("/Manage/Posts?sortOrder={0}{1}", ViewBag.PrivateSortArg, ManageController.AppendSearchRouteValue(ViewBag.currentSearch))>Private @ManageController.SetPrivacyIcon(ViewBag.currentSort)</a>
+                </th>
                 <th scope="col">Actions</th>
             }
         </tr>
@@ -49,6 +60,6 @@
 <div>
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("Index",
-        new { page, search = ViewBag.currentSearch}))
+    @Html.PagedListPager(Model, page => Url.Action("Posts",
+        new { page, search = ViewBag.currentSearch, sortOrder = ViewBag.currentSort }))
 </div>
