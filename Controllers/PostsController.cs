@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -175,6 +175,11 @@ namespace BlogNew.Controllers
             {
                 return HttpNotFound();
             }
+            //If current logged in user is different from post author return not found
+            if (post.UserId != User.Identity.GetUserId())
+            {
+                return HttpNotFound();
+            }
             ViewBag.UserId = new SelectList(db.Users, "Id", "Email", post.UserId);
             return View(post);
         }
@@ -189,44 +194,53 @@ namespace BlogNew.Controllers
         {
             if (ModelState.IsValid)
             {
-                post.UserId = User.Identity.GetUserId();
-                int maxLength = 350;
+                //Gets post object from DB
+                Post postDB = db.Posts.Find(post.PostId);
+                if (postDB == null)
+                {
+                    return HttpNotFound();
+                }
+                //If for whatever reason user associated with post is different from current logged in user return error page
+                if (postDB.UserId != User.Identity.GetUserId())
+                {
+                    return View("~/Views/Shared/Error.cshtml");
+                }
 
+                // Create a detached entity
+                db.Posts.Attach(postDB);
+
+                int maxLength = 256;
+                //Updates Sinopse
                 if (post.Content.Length > maxLength)
                 {
                     int lastSpace = post.Content.LastIndexOf(' ', maxLength);
 
                     if (lastSpace != -1)
                     {
-                        post.Sinopse = post.Content.Substring(0, lastSpace);
+                        // Trim at the last space within the first 256 characters
+                        postDB.Sinopse = post.Content.Substring(0, lastSpace);
                     }
                     else
                     {
-                        post.Sinopse = post.Content.Substring(0, maxLength);
+                        // No space found within the first 256 characters, so just trim at the character limit
+                        postDB.Sinopse = post.Content.Substring(0, maxLength);
                     }
                 }
                 else
                 {
-                    post.Sinopse = post.Content;
+                    postDB.Sinopse = post.Content;
                 }
 
-                var existingPost = db.Posts.Find(post.PostId);
+                // Update other properties
+                postDB.Title = post.Title;
+                postDB.Content = post.Content;
+                postDB.UpdatedAt = DateTime.UtcNow;
+                postDB.IsPrivate = post.IsPrivate;
 
-                if (existingPost != null)
-                {
-                    existingPost.Title = post.Title;
-                    existingPost.Content = post.Content;
-                    existingPost.Sinopse = post.Sinopse;
-                    existingPost.UpdatedAt = DateTime.UtcNow;
-                    existingPost.IsPrivate = post.IsPrivate;
+                db.SaveChanges();
+                return RedirectToAction("Index");
 
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    return HttpNotFound();
-                }
+
             }
 
             ViewBag.UserId = new SelectList(db.Users, "Id", "Email", post.UserId);
@@ -246,6 +260,11 @@ namespace BlogNew.Controllers
             {
                 return HttpNotFound();
             }
+            //If current logged in user is different from post author return not found
+            if (post.UserId != User.Identity.GetUserId())
+            {
+                return HttpNotFound();
+            }
             return View(post);
         }
 
@@ -255,6 +274,11 @@ namespace BlogNew.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Post post = db.Posts.Find(id);
+            //If for whatever reason user associated with post is different from current logged in user return error page
+            if (post.UserId != User.Identity.GetUserId())
+            {
+                return View("~/Views/Shared/Error.cshtml");
+            }
             db.Posts.Remove(post);
             db.SaveChanges();
             return RedirectToAction("Index");

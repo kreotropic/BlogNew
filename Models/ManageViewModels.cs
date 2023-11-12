@@ -42,12 +42,12 @@ namespace BlogNew.Models
 
     public class ChangePasswordViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Current password is required.")]
         [DataType(DataType.Password)]
         [Display(Name = "Current password")]
         public string OldPassword { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "New password is required.")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "New password")]
@@ -93,5 +93,6 @@ namespace BlogNew.Models
         public DateTime CreatedAt { get; set; }  
         public bool Private { get; set; }  
         public int Thumbs { get; set; }  
+        public string Author { get; set; }
     }
 }
