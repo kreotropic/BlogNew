@@ -1,0 +1,5 @@
+﻿<h2 class="my-5">@ViewBag.Username has no Posts.</h2>
+@if (ViewBag.IsAdmin)
+{
+    @Html.ActionLink("Back to Users", "Index", null, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
+}

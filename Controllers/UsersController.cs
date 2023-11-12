@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.Web.Services.Description;
+using System.Web.UI;
 using BlogNew.Migrations;
 using BlogNew.Models;
 using Microsoft.Ajax.Utilities;
@@ -26,7 +27,8 @@ namespace BlogNew.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager _userManager;
-        private const int PageSize = 3;
+        private const int IndexPageSize = 15;
+        private const int PostsPageSize = 5;
 
         public ApplicationUserManager UserManager
         {
@@ -105,11 +107,12 @@ namespace BlogNew.Controllers
             //So that next time there is a click in the same column it reverses the order.
             ViewBag.DisabledSortArg = sortOrder == "disabled" ? "notDisabled" : "disabled";
 
-            return View(usersWithRoles.ToPagedList(page, PageSize));
+            return View(usersWithRoles.ToPagedList(page, IndexPageSize));
         }
 
-        // GET: Users/Details/5
-        public ActionResult Details(string id)
+        // GET: Users/Posts/5
+        [AllowAnonymous]
+        public ActionResult Posts(string id, int page = 1)
         {
             if (id == null)
             {
@@ -120,7 +123,26 @@ namespace BlogNew.Controllers
             {
                 return HttpNotFound();
             }
-            return View(applicationUser);
+            //query - returns all public posts of user
+            var query = from p in db.Posts
+                        where p.UserId == applicationUser.Id
+                        && !p.IsPrivate
+                        orderby(p.CreatedAt) descending
+                        select p;
+
+            var posts = query.ToList();
+
+            ViewBag.Username = applicationUser.UserName;
+            ViewBag.IsAdmin = User.IsInRole("Admin");
+
+            if (posts.Count == 0)
+            {
+                return View("~/Views/Users/NoPosts.cshtml");
+            }
+            
+            ViewBag.UserId = applicationUser.Id;
+                        
+            return View(posts.ToPagedList(page, PostsPageSize));
         }
 
         // GET: Users/Create
@@ -228,7 +250,7 @@ namespace BlogNew.Controllers
                     //Add Edited Role
                     UserManager.AddToRole(user.Id, EditedUser.Role);
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Posts", new { id = EditedUser.UserId});
                 }
                 catch (Exception)
                 {
