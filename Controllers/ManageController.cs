@@ -20,7 +20,7 @@ namespace BlogNew.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        const int PageSize = 3;
+        const int PageSize = 10;
 
         public ManageController()
         {
@@ -68,6 +68,8 @@ namespace BlogNew.Controllers
                 : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : "";
+
+            ViewBag.IsAdmin = User.IsInRole("Admin");
 
             var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
