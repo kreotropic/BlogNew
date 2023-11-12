@@ -177,6 +177,11 @@ namespace BlogNew.Controllers
             {
                 return HttpNotFound();
             }
+            //If current logged in user is different from post author return not found
+            if (post.UserId != User.Identity.GetUserId())
+            {
+                return HttpNotFound();
+            }
             ViewBag.UserId = new SelectList(db.Users, "Id", "Email", post.UserId);
             return View(post);
         }
@@ -257,6 +262,11 @@ namespace BlogNew.Controllers
             {
                 return HttpNotFound();
             }
+            //If current logged in user is different from post author return not found
+            if (post.UserId != User.Identity.GetUserId())
+            {
+                return HttpNotFound();
+            }
             return View(post);
         }
 
@@ -266,6 +276,11 @@ namespace BlogNew.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Post post = db.Posts.Find(id);
+            //If for whatever reason user associated with post is different from current logged in user return error page
+            if (post.UserId != User.Identity.GetUserId())
+            {
+                return View("~/Views/Shared/Error.cshtml");
+            }
             db.Posts.Remove(post);
             db.SaveChanges();
             return RedirectToAction("Index");
