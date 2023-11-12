@@ -4,7 +4,7 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit User</h2>
+<h2 class="mt-5">Edit User</h2>
 
 @using (Html.BeginForm())
 {
@@ -55,8 +55,9 @@
 </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
+<div class="d-grid gap-1">
+    @Html.ActionLink("Back to Users", "Index", null, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
+    @Html.ActionLink("Back to User's Posts", "Posts", new { id = Model.UserId }, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
 </div>
 
 @section Scripts {

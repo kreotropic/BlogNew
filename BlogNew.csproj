@@ -298,7 +298,7 @@
     <Content Include="Views\Users\Delete.cshtml" />
     <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
-    <Content Include="Views\Users\Details.cshtml" />
+    <Content Include="Views\Users\Posts.cshtml" />
     <Content Include="Views\Shared\Disabled.cshtml" />
     <Content Include="Views\Posts\Create.cshtml" />
     <Content Include="Views\Posts\Delete.cshtml" />
@@ -308,6 +308,7 @@
     <Content Include="Views\Archive\Index.cshtml" />
     <Content Include="Views\Manage\Posts.cshtml" />
     <Content Include="Views\Manage\PostsAdmin.cshtml" />
+    <Content Include="Views\Users\NoPosts.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
