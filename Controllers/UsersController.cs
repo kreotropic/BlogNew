@@ -27,8 +27,8 @@ namespace BlogNew.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager _userManager;
-        private const int IndexPageSize = 15;
-        private const int PostsPageSize = 5;
+        private const int IndexPageSize = 12;
+        private const int PostsPageSize = 8;
 
         public ApplicationUserManager UserManager
         {
