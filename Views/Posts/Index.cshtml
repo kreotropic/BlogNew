@@ -4,7 +4,6 @@
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <link href="~/Content/style.css" rel="stylesheet" type="text/css" />
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
 <style>
     .title {
         text-decoration: none;
@@ -19,119 +18,100 @@
     ViewBag.Title = "Home Page";
 }
 
-@*{
-    ViewBag.Title = "Home Page";
-}*@
 
 
-    @*@using (Html.BeginForm())
-        {
-            <p>
-                Find by name: @Html.TextBox("SearchString")
-                <input type="submit" value="Search" />
-            </p>
-        }*@
 
 
-        @*<div>
-                @Html.ActionLink("Created At", "Index", new { sortOrder = ViewBag.DateSortParm })
-            </div>*@
+
+
+<div class="table">
+
+
+
 
     @foreach (var item in Model)
     {
+        <div class="container">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark title" })</h5>
+                    <p class="card-text">@Html.Raw(item.Sinopse) ...>></p>
+                    <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
 
-        <div class=" card my-5 ">
+                    <p class="card-text">Created by: @Html.DisplayFor(modelItem => item.User.UserName)</p>
 
-            <h1 class="card-title text-uppercase my-5 m-2">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark title" })</h1>
-            
-            
-            <p class="card-text m-2 fs-2 " text>@Html.Raw(item.Sinopse) ...>></p>
+                    <div class="card-text">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="button" class="btn thumbs-up-btn" data-post-id="@item.PostId">
+                                    <i class="thumb_icon bi @(ViewBag.AlreadyThumbed ? "bi-hand-thumbs-up-fill" : "bi-hand-thumbs-up")"></i>
+                                    <span class="thumbs-count">@item.ThumbsCount</span>
+                                </button>
 
-
-            <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
-
-            <p class="card-text">Created by: @Html.DisplayFor(modelItem => item.User.UserName)</p>
-
-            <div class="card-text">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
-                    {
-                        @Html.AntiForgeryToken()
-                        <button type="button" class="btn thumbs-up-btn" data-post-id="@item.PostId">
+                            }
+                        }
+                        else
+                        {
                             <i class="thumb_icon bi bi-hand-thumbs-up"></i> <span class="thumbs-count">@item.ThumbsCount</span>
-                        </button>
-                    }
-                }
-                else
-                {
-                    <i class="thumb_icon bi bi-hand-thumbs-up"></i> <span class="thumbs-count">@item.ThumbsCount</span>
-                }
+                        }
+                    </div>
+
+
+
+
+
+
+
+                </div>
             </div>
-
-
-
-
-            @if (User.Identity.IsAuthenticated)
-            {
-                bool isCreator = item.User.UserName == User.Identity.Name;
-
-                <p class="card-text">
-                    @if (isCreator)
-                    {
-                        @Html.ActionLink("Edit", "Edit", new { id = item.PostId }, new { @class = "btn btn-primary" })
-                        @Html.ActionLink("Delete", "Delete", new { id = item.PostId }, new { @class = "btn btn-danger" })
-                    }
-                    @*@Html.ActionLink("Details", "Details", new { id = item.PostId }, new { @class = "btn btn-secondary" })*@
-                </p>
-            }
-
-
         </div>
-
     }
 
-    <div class="pagination-container">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
-    </div>
+</div>
 
+<div class="pagination-container">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
 
-    @section scripts {
-        <script>
-            $(document).ready(function () {
-                $(".thumbs-up-btn").click(function () {
-                    var postId = $(this).data("post-id");
-                    var counterElement = $(this).closest('.card-body').find(".thumbs-count");
-                    var thumbIcon = $(this).find(".thumb_icon");
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".thumbs-up-btn").click(function () {
+                var postId = $(this).data("post-id");
+                var counterElement = $(this).closest('.card-body').find(".thumbs-count");
+                var thumbIcon = $(this).find(".thumb_icon");
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/Posts/ThumbsUp",
-                        data: {
-                            postId: postId,
-                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                        },
-                        success: function (data) {
-                            counterElement.text(data.ThumbsCount);
+                $.ajax({
+                    type: "POST",
+                    url: "/Posts/ThumbsUp",
+                    data: {
+                        postId: postId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (data) {
+                        counterElement.text(data.ThumbsCount);
 
-                            if (data.AlreadyThumbed) {
-                                thumbIcon.removeClass("bi-hand-thumbs-up-fill");
-                                thumbIcon.addClass("bi-hand-thumbs-up");
-                            } else {
-                                thumbIcon.removeClass("bi-hand-thumbs-up");
-                                thumbIcon.addClass("bi-hand-thumbs-up-fill");
-                            }
-                        },
-                        dataType: 'json',
-                        error: function (error) {
-                            console.error("Error during Thumbs Up:", error);
+                        if (data.AlreadyThumbed) {
+                            thumbIcon.removeClass("bi-hand-thumbs-up-fill");
+                            thumbIcon.addClass("bi-hand-thumbs-up");
+                        } else {
+                            thumbIcon.removeClass("bi-hand-thumbs-up");
+                            thumbIcon.addClass("bi-hand-thumbs-up-fill");
                         }
-                    });
+                    },
+                    dataType: 'json',
+                    error: function (error) {
+                        console.error("Error during Thumbs Up:", error);
+                    }
                 });
             });
+        });
 
-        </script>
-    }
+    </script>
+}
 
 
 

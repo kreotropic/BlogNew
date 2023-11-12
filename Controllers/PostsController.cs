@@ -33,7 +33,6 @@ namespace BlogNew.Controllers
             }
 
             ViewBag.CurrentFilter = searchString;
-
             //var posts = (from p in db.Posts
             //             join u in db.Users on p.UserId equals u.Id
             //             select new { Post = p, User = u })
@@ -52,7 +51,7 @@ namespace BlogNew.Controllers
             var posts = (from p in db.Posts
                          join u in db.Users on p.UserId equals u.Id
                          select new { Post = p, User = u })
-            .ToList();
+                         .ToList();
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -64,16 +63,18 @@ namespace BlogNew.Controllers
                     return RedirectToAction("Index", "Posts");
                 }
             }
-            else {
-
-                
-
-            }
+            
 
 
             foreach (var post in posts)
             {
+                string userId = User.Identity.GetUserId();
+
                 post.Post.ThumbsCount = ThumbsCount(post.Post.PostId, db);
+                bool alreadyThumbed = db.Thumbs.Any(t => t.PostId == post.Post.PostId && t.UserId == userId);
+                ViewBag.AlreadyThumbed = alreadyThumbed;
+
+
             }
 
             posts = posts.Where(p => p.Post.IsPrivate == false).ToList();
@@ -304,6 +305,9 @@ namespace BlogNew.Controllers
                 if (post != null)
                 {
                     post.ThumbsCount = db.Thumbs.Count(t => t.PostId == postId);
+
+                    System.Diagnostics.Debug.WriteLine(post.ThumbsCount);
+
 
                     string userId = User.Identity.GetUserId();
 

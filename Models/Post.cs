@@ -6,6 +6,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
 
+
 namespace BlogNew.Models
 {
     public class Post

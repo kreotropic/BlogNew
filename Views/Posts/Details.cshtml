@@ -4,58 +4,66 @@
     ViewBag.Title = "Details";
 }
 
-
+@using Microsoft.AspNet.Identity
 
 <div>
 
 
 
 
+    <div>
+        <h1>
+            @Html.DisplayFor(model => model.Title)
+        </h1>
+    </div>
 
-
-
-
-
-    <h1>
-        @Html.DisplayFor(model => model.Title)
-    </h1>
-
-
-
-
-
-
-
-    <p>
+    <div>
         @Html.Raw(Model.Content)
-    </p>
+    </div>
 
 
-    <p>Created by</p>
-    <p>
+
+
+    <div class="d-flex px-5">
+        <p class="px-1 fst-italic">Created by: </p>
+
+        
         @if (Model.User != null)
         {
-            @Html.DisplayFor(model => model.User.UserName)
+            @Html.DisplayFor(model => model.User.UserName, new {@class= "" })
         }
         else
         {
-            <text>User not available</text>
+            <p class="fst-italic p-2">
+                <text>User not available</text>
+            </p>
         }
-    </p>
+        <p class="px-1 fst-italic">in </p>
 
+        <p class="">
+            @string.Format("{0:yyyy-MM-dd}", Model.CreatedAt)
+        </p>
 
+        
+            @if (User.Identity.IsAuthenticated)
+            {
+                bool isCreator = Model.UserId == User.Identity.GetUserId();
 
-    <p>Created at</p>
+                if (isCreator)
+                {
+                    <div class="ms-auto ">
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.PostId }, new { @class = "link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover px-2" })
+                        @Html.ActionLink("Delete", "Delete", new { id = Model.PostId }, new { @class = "link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" })
+                    </div>
+                }
+            }
+    </div>
 
-    <p>
-        @Html.DisplayFor(model => model.CreatedAt)
-    </p>
+ 
 
-
-
+    <div style="margin-bottom: 40px;">
+        @Html.ActionLink("Back to List", "Index", new { @class = "link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" })
+    </div>
 
 </div>
-<p>
-    @*@Html.ActionLink("Edit", "Edit", new { id = Model.PostId }) |*@
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
