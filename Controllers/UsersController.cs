@@ -127,22 +127,29 @@ namespace BlogNew.Controllers
             var query = from p in db.Posts
                         where p.UserId == applicationUser.Id
                         && !p.IsPrivate
-                        orderby(p.CreatedAt) descending
-                        select p;
+                        orderby (p.CreatedAt) descending
+                        select new UserPostViewModel { Post = p };
 
-            var posts = query.ToList();
+            var userPosts = query.ToList();
 
             ViewBag.Username = applicationUser.UserName;
             ViewBag.IsAdmin = User.IsInRole("Admin");
 
-            if (posts.Count == 0)
+            if (userPosts.Count == 0)
             {
                 return View("~/Views/Users/NoPosts.cshtml");
             }
             
             ViewBag.UserId = applicationUser.Id;
+
+
+            //See if current user has liked current posts
+            foreach (var p in userPosts)
+            {
+                
+            }
                         
-            return View(posts.ToPagedList(page, PostsPageSize));
+            return View(userPosts.ToPagedList(page, PostsPageSize));
         }
 
         // GET: Users/Create

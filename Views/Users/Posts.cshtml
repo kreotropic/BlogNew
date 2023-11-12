@@ -1,12 +1,12 @@
-﻿@model PagedList.IPagedList<BlogNew.Models.Post>
+﻿@model PagedList.IPagedList<BlogNew.Models.UserPostViewModel>
 @using PagedList.Mvc;
 @{
     ViewBag.Title = $"{ViewBag.Username}'s Posts";
 }
 
 <style>
-    .date {
-        font-size: 0.85rem;
+    .date, .thumb-counter {
+        font-size: 0.95rem;
         color: lightslategrey;
     }
     .title-link {
@@ -18,11 +18,11 @@
     @if (ViewBag.IsAdmin)
     {
         <div class="d-grid gap-2 my-5">
-            <h2 style="color:midnightblue;">@ViewBag.Title</h2>
+            <h2 class="text-decoration-underline text-primary-emphasis">@ViewBag.Title</h2>
             <div class="d-flex gap-3">
-                @Html.ActionLink("Back to Users", "Index", null, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
                 @Html.ActionLink($"Edit {ViewBag.Username}", "Edit", new { id = ViewBag.UserId }, new { @class = "link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
                 @Html.ActionLink($"Delete {ViewBag.Username}", "Delete", new { id = ViewBag.UserId }, new { @class = "link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
+                @Html.ActionLink("Back to Users", "Index", null, new { @class = "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" })
             </div>
         </div>
     }
@@ -32,14 +32,25 @@
     }
 
     <div class="d-grid gap-2 mb-4 fs-5">
-        @foreach (var post in Model)
+        @foreach (var i in Model)
         {
             <div class="pb-4 mb-4" style="border-bottom: 1px solid #EBF2F6;">
                 <article>
-                    <h3 class="fw-bold">@Html.ActionLink(post.Title, "Details", "Posts", new { id = post.PostId}, new { @class="title-link" } )</h3>
-                    <p>@post.Sinopse</p>
-                    <div class="d-flex gap-2">
-                        <time class="date"><i class="bi bi-calendar me-2"></i>@post.CreatedAt.ToShortDateString()</time>
+                    <h3 class="fw-bold text-break">@Html.ActionLink(i.Post.Title, "Details", "Posts", new { id = i.Post.PostId}, new { @class="title-link" } )</h3>
+                    <p class="text-break">@i.Post.Sinopse</p>
+                    <div class="d-flex gap-4">
+                        <time class="date"><i class="bi bi-calendar me-2"></i>@i.Post.CreatedAt.ToShortDateString()</time>
+                        <span class="thumb-counter">
+                            @if (i.HasUserLiked)
+                            {
+                                <i class="bi bi-hand-thumbs-up-fill text-success"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-hand-thumbs-up-fill text-secondary"></i>
+                            }
+                            <span>@i.Post.ThumbsCount</span>
+                        </span>
                     </div>
                 </article>
             </div>
