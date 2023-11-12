@@ -1,5 +1,6 @@
 ﻿@model PagedList.IPagedList<BlogNew.Models.UserViewModel>
 @using PagedList.Mvc;
+@using BlogNew.Controllers;
 @{
     ViewBag.Title = "Manage Users";
 }
@@ -12,6 +13,10 @@
         <div class="d-flex gap-2">
             <div><span>Role: </span>@Html.DropDownList("roleFilter")</div>
             <div><span>User/Email: </span>@Html.TextBox("search", ViewBag.currentSearch as string)</div>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.currentSort))
+            {
+                <input name="sortOrder" type="hidden" value="@ViewBag.currentSort">
+            }
             <input type="submit" value="Filter" />
         </div>
     }
@@ -25,7 +30,7 @@
                 <th scope="col">@Html.DisplayNameFor(model => model[0].Username)</th>
                 <th scope="col">@Html.DisplayNameFor(model => model[0].Email)</th>
                 <th scope="col">@Html.DisplayNameFor(model => model[0].Roles)</th>
-                <th scope="col">@Html.DisplayNameFor(model => model[0].IsDisabled)</th>
+                <th scope="col"><a class="text-decoration-none" href=@string.Format("/Users?sortOrder={0}{1}", ViewBag.DisabledSortArg, UsersController.AppendSearchRouteValue(ViewBag.currentSearch, ViewBag.currentFilter))>Disabled @UsersController.SetDisabledIcon(ViewBag.currentSort)</a></th>
                 <th scope="col">Actions</th>
             }
         </tr>
@@ -51,5 +56,5 @@
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
     @Html.PagedListPager(Model, page => Url.Action("Index",
-        new { page, search = ViewBag.currentSearch, roleFilter = ViewBag.currentFilter }))
+        new { page, search = ViewBag.currentSearch, roleFilter = ViewBag.currentFilter, sortOrder = ViewBag.currentSort }))
 </div>

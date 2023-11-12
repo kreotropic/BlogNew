@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Web.Services.Description;
 using BlogNew.Migrations;
 using BlogNew.Models;
 using Microsoft.Ajax.Utilities;
@@ -24,7 +26,7 @@ namespace BlogNew.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager _userManager;
-        private const int PageSize = 10;
+        private const int PageSize = 3;
 
         public ApplicationUserManager UserManager
         {
@@ -39,7 +41,7 @@ namespace BlogNew.Controllers
         }
 
         // GET: Users
-        public ActionResult Index(string search, string roleFilter, int page = 1)
+        public ActionResult Index(string search, string roleFilter, string sortOrder, int page = 1)
         {
             //Gets all users and respective roles
             var usersWithRoles = 
@@ -78,12 +80,30 @@ namespace BlogNew.Controllers
                 ViewBag.currentFilter = roleFilter;
             }
 
+            //sortOrder
+            switch (sortOrder)
+            {
+                case "disabled":
+                    usersWithRoles = usersWithRoles.OrderByDescending(u => u.IsDisabled);
+                    break;
+                case "notDisabled":
+                    usersWithRoles = usersWithRoles.OrderBy(u => u.IsDisabled);
+                    break;
+                default:
+                    break;
+            }
+
             //Add role list to view
             ViewBag.roleFilter = new SelectList(GetRolesListWithAll(), roleFilter);
 
             //Add current filters to view bag because of paginated returns
             ViewBag.currentSearch = search;
             ViewBag.currentFilter = roleFilter;
+            ViewBag.currentSort = sortOrder;
+
+            //Define sort argument in view to the reverse order of current argument.
+            //So that next time there is a click in the same column it reverses the order.
+            ViewBag.DisabledSortArg = sortOrder == "disabled" ? "notDisabled" : "disabled";
 
             return View(usersWithRoles.ToPagedList(page, PageSize));
         }
@@ -309,6 +329,35 @@ namespace BlogNew.Controllers
             }
 
             return result;
+        }
+
+        public static HtmlString SetDisabledIcon(string currentSort)
+        {
+            if (string.IsNullOrWhiteSpace(currentSort))
+            {
+                return null;
+            }
+
+            if (currentSort == "disabled")
+            {
+                return new HtmlString("<i class=\"bi bi-person-x-fill\"></i>");
+            }
+
+            return new HtmlString("<i class=\"bi bi-person-check-fill\"></i>");
+        }
+
+        public static string AppendSearchRouteValue(string currentSearch, string currentFilter)
+        {
+            string value = "";
+            if (!string.IsNullOrWhiteSpace(currentSearch))
+            {
+                value += string.Format("&search={0}", currentSearch);
+            }
+            if (!string.IsNullOrWhiteSpace(currentFilter))
+            {
+                value += string.Format("&roleFilter={0}", currentFilter);
+            }
+            return value;
         }
     }
 }
