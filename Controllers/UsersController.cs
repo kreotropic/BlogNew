@@ -143,10 +143,12 @@ namespace BlogNew.Controllers
             ViewBag.UserId = applicationUser.Id;
 
 
-            //See if current user has liked current posts
+            //See if current user has liked and sets Thumb counter for each post
             foreach (var p in userPosts)
             {
-                
+                Post post = p.Post;
+                p.HasUserLiked = HasCurrentUserLiked(post.PostId);
+                post.ThumbsCount = db.Thumbs.Count(t => t.PostId == post.PostId);
             }
                         
             return View(userPosts.ToPagedList(page, PostsPageSize));
@@ -324,6 +326,16 @@ namespace BlogNew.Controllers
             {
                 ModelState.AddModelError("", error);
             }
+        }
+
+        private bool HasCurrentUserLiked(int postId)
+        {
+            string userId = User.Identity.GetUserId();
+            if (userId == null)
+            {
+                return false;
+            }
+            return db.Thumbs.Any(t => t.UserId == userId && t.PostId == postId);
         }
 
         private IQueryable<string> GetAllRolesFromDB()

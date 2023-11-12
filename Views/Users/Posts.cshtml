@@ -13,6 +13,12 @@
         text-decoration: none;
         color: inherit;
     }
+    .liked {
+        color: forestgreen;
+    }
+    .not-liked {
+        color: lightgray;
+    }
 </style>
 <main style="max-width:1000px; margin-inline:auto">
     @if (ViewBag.IsAdmin)
@@ -43,11 +49,11 @@
                         <span class="thumb-counter">
                             @if (i.HasUserLiked)
                             {
-                                <i class="bi bi-hand-thumbs-up-fill text-success"></i>
+                                <i class="bi bi-hand-thumbs-up-fill liked"></i>
                             }
                             else
                             {
-                                <i class="bi bi-hand-thumbs-up-fill text-secondary"></i>
+                                <i class="bi bi-hand-thumbs-up-fill not-liked"></i>
                             }
                             <span>@i.Post.ThumbsCount</span>
                         </span>
