@@ -134,7 +134,7 @@ namespace BlogNew.Controllers
             {
 
                 post.UserId = User.Identity.GetUserId();
-                int maxLength = 256;
+                int maxLength = 350;
 
                 if (post.Content.Length > maxLength)
                 {
@@ -142,12 +142,10 @@ namespace BlogNew.Controllers
 
                     if (lastSpace != -1)
                     {
-                        // Trim at the last space within the first 256 characters
                         post.Sinopse = post.Content.Substring(0, lastSpace);
                     }
                     else
                     {
-                        // No space found within the first 256 characters, so just trim at the character limit
                         post.Sinopse = post.Content.Substring(0, maxLength);
                     }
                 }
@@ -187,14 +185,12 @@ namespace BlogNew.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Edit(/*[Bind(Include = "PostId,UserId,Title,Sinopse,Content,CreatedAt,UpdatedAt,IsPrivate")]*/ Post post)
+        public ActionResult Edit(Post post)
         {
-
-
             if (ModelState.IsValid)
             {
                 post.UserId = User.Identity.GetUserId();
-                int maxLength = 256;
+                int maxLength = 350;
 
                 if (post.Content.Length > maxLength)
                 {
@@ -202,12 +198,10 @@ namespace BlogNew.Controllers
 
                     if (lastSpace != -1)
                     {
-                        // Trim at the last space within the first 256 characters
                         post.Sinopse = post.Content.Substring(0, lastSpace);
                     }
                     else
                     {
-                        // No space found within the first 256 characters, so just trim at the character limit
                         post.Sinopse = post.Content.Substring(0, maxLength);
                     }
                 }
@@ -216,27 +210,29 @@ namespace BlogNew.Controllers
                     post.Sinopse = post.Content;
                 }
 
-                // Create a detached entity
-                var attachedEntity = new Post { PostId = post.PostId };
-                db.Posts.Attach(attachedEntity);
+                var existingPost = db.Posts.Find(post.PostId);
 
-                // Exclude CreatedAt from modification
-                db.Entry(attachedEntity).Property(x => x.CreatedAt).IsModified = false;
+                if (existingPost != null)
+                {
+                    existingPost.Title = post.Title;
+                    existingPost.Content = post.Content;
+                    existingPost.Sinopse = post.Sinopse;
+                    existingPost.UpdatedAt = DateTime.UtcNow;
+                    existingPost.IsPrivate = post.IsPrivate;
 
-                // Update other properties
-                attachedEntity.Title = post.Title;
-                attachedEntity.Content = post.Content;
-                attachedEntity.UpdatedAt = DateTime.UtcNow;
-                attachedEntity.IsPrivate = post.IsPrivate;
-
-                db.SaveChanges();
-                return RedirectToAction("Index");
-
-
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return HttpNotFound();
+                }
             }
+
             ViewBag.UserId = new SelectList(db.Users, "Id", "Email", post.UserId);
             return View(post);
         }
+
 
         // GET: Posts/Delete/5
         public ActionResult Delete(int? id)

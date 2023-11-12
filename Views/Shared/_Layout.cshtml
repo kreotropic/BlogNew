@@ -9,49 +9,55 @@
     <link href="~/Content/BooststrapIcons/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark p-0">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Posts", new { area = "" }, new { @class = "navbar-brand" })
+            @Html.ActionLink("M-LOG", "Index", "Posts", new { area = "" }, new { @class = "navbar-brand" })
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Posts", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Create post", "Create", "Posts", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Posts list", "Index", "Posts", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>
-                        @using (Html.BeginForm())
-                        {
-                            <div class="align-bottom">
-                                Find by name: @Html.TextBox("SearchString")
-                                <input type="submit" class="btn btn-primary p-1" value="Find" />
-                                @if (ViewBag.NoMoviesFound != null)
-                                {
-                                    @ViewBag.NoMoviesFound
-                                }
-                            </div>
-                        }
-                    </li>
-
-
-
-
+                    <li>@Html.ActionLink("Archive", "Index", "Archive", new { area = "" }, new { @class = "nav-link" })</li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Create post", "Create", "Posts", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
                 </ul>
+                <form class="d-flex input-group-sm px-5">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Find movie" })
+                        <input type="submit" class="btn btn-outline-secondary" value="Find" />
+                        if (ViewBag.NoMoviesFound != null)
+                        {
+                            @ViewBag.NoMoviesFound
+                        }
+                    }
+                </form>
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
     </nav>
+
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
+
+    <footer class="bg-dark text-white p-1 fixed-bottom">
+        <div class="container-fluid">
+            <div class="row ">
+                <div class="col-md-6 d-flex justify-content-start">
+                    <p class="mb-0">&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+                </div>
+                <div class="col-md-6 d-flex justify-content-end">
+                    <p class="me-3 mb-0">@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</p>
+                    <p class="me-3 mb-0">@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
@@ -63,13 +69,5 @@
         alert(noMoviesFoundMessage);
     }
     </script>
-
-    <style>
-
-.
-
-    </style>
-
 </body>
-
 </html>
