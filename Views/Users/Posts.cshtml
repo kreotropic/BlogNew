@@ -53,7 +53,7 @@
             <div class="pb-4 mb-4" style="border-bottom: 1px solid #EBF2F6;">
                 <article>
                     <h3 class="fw-bold text-break">@Html.ActionLink(i.Post.Title, "Details", "Posts", new { id = i.Post.PostId }, new { @class = "title-link" })</h3>
-                    <p class="text-break">@i.Post.Sinopse</p>
+                    <p class="text-break">@Html.Raw(i.Post.Sinopse)</p>
                     <div class="d-flex gap-4 align-items-center">
                         <time class="date"><i class="bi bi-calendar me-2"></i>@i.Post.CreatedAt.ToShortDateString()</time>
                         <div class="thumb-counter">
