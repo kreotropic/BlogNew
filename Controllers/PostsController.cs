@@ -16,79 +16,46 @@ namespace BlogNew.Controllers
     public class PostsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private const int IndexPageSize = 8;
 
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, DateTime? dateFilter, int? page)
+        public ActionResult Index(string search, int page = 1)
         {
-            ViewBag.CurrentSort = sortOrder;
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            //Add current search filter to view bag because of paginated returns
+            ViewBag.currentSearch = search;
 
-            if (searchString != null || dateFilter != null)
+            //query - returns all public posts and their respective authors
+            var query = from p in db.Posts
+                        join u in db.Users on p.UserId equals u.Id
+                        where !p.IsPrivate
+                        orderby (p.CreatedAt) descending
+                        select new PostIndexViewModel { Post = p, User = u };
+
+            //if search query inserted than returns filtered list, else return all public posts
+            List<PostIndexViewModel> posts;
+            if (!String.IsNullOrEmpty(search))
             {
-                page = 1;
+                posts = query.Where(x => x.Post.Title.Contains(search)).ToList();
             }
             else
             {
-                searchString = currentFilter;
+                posts = query.ToList();
             }
 
-            ViewBag.CurrentFilter = searchString;
-
-            var posts = (from p in db.Posts
-                         join u in db.Users on p.UserId equals u.Id
-                         select new { Post = p, User = u })
-                        .ToList();
-
-            if (!String.IsNullOrEmpty(searchString))
+            //Returns appropriate view if no results found
+            if (posts.Count == 0)
             {
-                posts = posts
-                    .Where(p => p.Post.Title.Contains(searchString) || p.User.UserName.Contains(searchString))
-                    .ToList();
-
-                if (posts.Count == 0)
-                {
-                    TempData["NoMoviesFound"] = "No movies were found with the given title or username.";
-                    return RedirectToAction("Index", "Posts");
-                }
+                return View("~/Views/Posts/NoPosts.cshtml");
             }
 
-            if (dateFilter != null)
+            //See if current user has liked and sets Thumb counter for each post
+            foreach (var p in posts)
             {
-                posts = posts
-                    .Where(p => p.Post.CreatedAt.Date == dateFilter)
-                    .ToList();
+                Post post = p.Post;
+                p.HasUserLiked = HasCurrentUserLiked(post.PostId);
+                post.ThumbsCount = db.Thumbs.Count(t => t.PostId == post.PostId);
             }
 
-            foreach (var post in posts)
-            {
-                string userId = User.Identity.GetUserId();
-
-                post.Post.ThumbsCount = ThumbsCount(post.Post.PostId, db);
-                bool alreadyThumbed = db.Thumbs.Any(t => t.PostId == post.Post.PostId && t.UserId == userId);
-                ViewBag.AlreadyThumbed = alreadyThumbed;
-            }
-
-            posts = posts
-                .Where(p => p.Post.IsPrivate == false)
-                .ToList();
-
-            switch (sortOrder)
-            {
-                case "Date":
-                    posts = posts.OrderBy(p => p.Post.CreatedAt).ToList();
-                    break;
-                case "date_desc":
-                    posts = posts.OrderByDescending(p => p.Post.CreatedAt).ToList();
-                    break;
-                default:
-                    posts = posts.OrderByDescending(p => p.Post.CreatedAt).ToList();
-                    break;
-            }
-
-            int pageSize = 4;
-            int pageNumber = (page ?? 1);
-
-            return View(posts.Select(p => p.Post).ToPagedList(pageNumber, pageSize));
+            return View(posts.ToPagedList(page, IndexPageSize));
         }
 
 
@@ -371,7 +338,15 @@ namespace BlogNew.Controllers
             }
         }
 
-
+        private bool HasCurrentUserLiked(int postId)
+        {
+            string userId = User.Identity.GetUserId();
+            if (userId == null)
+            {
+                return false;
+            }
+            return db.Thumbs.Any(t => t.UserId == userId && t.PostId == postId);
+        }
 
 
 
