@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using BlogNew.Models;
@@ -131,23 +132,35 @@ namespace BlogNew.Controllers
                 post.UserId = User.Identity.GetUserId();
                 int maxLength = 350;
 
-                if (post.Content.Length > maxLength)
+                string contentWithoutImages = Regex.Replace(post.Content, "<img[^>]*>", "", RegexOptions.IgnoreCase);
+
+                string[] lines = contentWithoutImages.Split('\n');
+                lines = lines
+                    .Select(line => line.Trim()) 
+                    .Where(line => !string.IsNullOrWhiteSpace(line) && line != "<p>&nbsp;</p>")
+                    .ToArray();
+
+                contentWithoutImages = string.Join("\n", lines);
+
+                if (contentWithoutImages.Length > maxLength)
                 {
-                    int lastSpace = post.Content.LastIndexOf(' ', maxLength);
+                    int lastSpace = contentWithoutImages.LastIndexOf(' ', maxLength);
 
                     if (lastSpace != -1)
                     {
-                        post.Sinopse = post.Content.Substring(0, lastSpace);
+                        post.Sinopse = contentWithoutImages.Substring(0, lastSpace);
                     }
                     else
                     {
-                        post.Sinopse = post.Content.Substring(0, maxLength);
+                        post.Sinopse = contentWithoutImages.Substring(0, maxLength);
                     }
                 }
                 else
                 {
-                    post.Sinopse = post.Content;
+                    post.Sinopse = contentWithoutImages;
                 }
+
+
 
                 db.Posts.Add(post);
                 db.SaveChanges();
@@ -201,32 +214,38 @@ namespace BlogNew.Controllers
                     return View("~/Views/Shared/Error.cshtml");
                 }
 
-                // Create a detached entity
                 db.Posts.Attach(postDB);
 
                 int maxLength = 350;
-                //Updates Sinopse
-                if (post.Content.Length > maxLength)
+
+                string contentWithoutImages = Regex.Replace(post.Content, "<img[^>]*>", "", RegexOptions.IgnoreCase);
+
+                string[] lines = contentWithoutImages.Split('\n');
+                lines = lines
+                    .Select(line => line.Trim())
+                    .Where(line => !string.IsNullOrWhiteSpace(line) && line != "<p>&nbsp;</p>")
+                    .ToArray();
+
+                contentWithoutImages = string.Join("\n", lines);
+
+                if (contentWithoutImages.Length > maxLength)
                 {
-                    int lastSpace = post.Content.LastIndexOf(' ', maxLength);
+                    int lastSpace = contentWithoutImages.LastIndexOf(' ', maxLength);
 
                     if (lastSpace != -1)
                     {
-                        // Trim at the last space within the first 350 characters
-                        postDB.Sinopse = post.Content.Substring(0, lastSpace);
+                        post.Sinopse = contentWithoutImages.Substring(0, lastSpace);
                     }
                     else
                     {
-                        // No space found within the first 350 characters, so just trim at the character limit
-                        postDB.Sinopse = post.Content.Substring(0, maxLength);
+                        post.Sinopse = contentWithoutImages.Substring(0, maxLength);
                     }
                 }
                 else
                 {
-                    postDB.Sinopse = post.Content;
+                    post.Sinopse = contentWithoutImages;
                 }
 
-                // Update other properties
                 postDB.Title = post.Title;
                 postDB.Content = post.Content;
                 postDB.UpdatedAt = DateTime.UtcNow;
