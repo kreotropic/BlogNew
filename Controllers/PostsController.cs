@@ -33,38 +33,22 @@ namespace BlogNew.Controllers
             }
 
             ViewBag.CurrentFilter = searchString;
-            //var posts = (from p in db.Posts
-            //             join u in db.Users on p.UserId equals u.Id
-            //             select new { Post = p, User = u })
-            //            .ToList();
-
-
-
-
-
-            //if (!String.IsNullOrEmpty(searchString))
-            //{
-            //    posts = posts.Where(p => p.User.UserName.Contains(searchString)).ToList();
-            //}
-
 
             var posts = (from p in db.Posts
                          join u in db.Users on p.UserId equals u.Id
                          select new { Post = p, User = u })
-                         .ToList();
+                        .ToList();
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                posts = posts.Where(p => p.Post.Title.Contains(searchString)).ToList();
+                posts = posts.Where(p => p.Post.Title.Contains(searchString) || p.User.UserName.Contains(searchString)).ToList();
 
                 if (posts.Count == 0)
                 {
-                    TempData["NoMoviesFound"] = "No movies were found with the given title.";
+                    TempData["NoMoviesFound"] = "No movies were found with the given title or username.";
                     return RedirectToAction("Index", "Posts");
                 }
             }
-            
-
 
             foreach (var post in posts)
             {
@@ -73,8 +57,6 @@ namespace BlogNew.Controllers
                 post.Post.ThumbsCount = ThumbsCount(post.Post.PostId, db);
                 bool alreadyThumbed = db.Thumbs.Any(t => t.PostId == post.Post.PostId && t.UserId == userId);
                 ViewBag.AlreadyThumbed = alreadyThumbed;
-
-
             }
 
             posts = posts.Where(p => p.Post.IsPrivate == false).ToList();
@@ -97,6 +79,7 @@ namespace BlogNew.Controllers
 
             return View(posts.Select(p => p.Post).ToPagedList(pageNumber, pageSize));
         }
+
 
 
 

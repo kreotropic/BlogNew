@@ -22,7 +22,7 @@
 
 
 
-<div class="table">
+<div class="table pb-5">
 
 
 
@@ -58,11 +58,27 @@
                             }
                         </div>
 
-                        <p class="card-text mb-0">Created by: @Html.DisplayFor(modelItem => item.User.UserName)</p>
+                        <p class="card-text mb-0">
+                            Created by:
+                            @if (!String.IsNullOrEmpty(item.User.UserName))
+                            {
+                                <a href="@Url.Action("Index", "Posts", new { searchString = item.User.UserName })">
+                                    @item.User.UserName
+                                </a>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.User.UserName)
+                            }
+                        </p>
+
 
                         <p class="card-text">
-                            <small class="text-muted">@item.CreatedAt.ToString("MM/dd/yyyy")</small>
+                            <small class="text-muted">
+                                @Html.ActionLink(item.CreatedAt.ToString("MM/dd/yyyy"), "Index", "Posts", new { date = item.CreatedAt.ToString("yyyy-MM-dd") }, new { @class = "your-link-class" })
+                            </small>
                         </p>
+
 
 
 
