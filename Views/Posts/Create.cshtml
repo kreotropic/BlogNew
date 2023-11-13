@@ -6,23 +6,15 @@
 }
 
 <style>
-    #Title {
-        max-width: 100% ;
-        background-color: #797878;
-    }
-    .input {
-max-width: 100% ;
-        background-color: #ff6a00;
-    }
 
-    #UserName{
-max-width: 100% ;
-        background-color: #ff6a00;
-    } 
 
+    .btn {
+        min-width: 70px;
+    }
 </style>
 
-<h2>Posts</h2>
+<h2 class="px-4">New post</h2>
+
 
 
 @using (Html.BeginForm())
@@ -30,51 +22,51 @@ max-width: 100% ;
     @Html.AntiForgeryToken()
 
 
-    <div class="form-horizontal container">
+<div class="form-horizontal container">
 
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="row ">
-            <div class="col-md-12 mx-auto ">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
-                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control title", style = "max-width: 100%" })
-                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-                </div>
-
-
- 
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label" })
-                    @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @id = "tiny" })
-                    @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.IsPrivate, htmlAttributes: new { @class = "control-label" })
-                    <div>
-                        @Html.EditorFor(model => model.IsPrivate)
-                        @Html.ValidationMessageFor(model => model.IsPrivate, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div>
-                        <input type="submit" value="Create" class="btn btn-default" />
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="form-group shadow-sm p-3  bg-body-tertiary rounded form-floating ">
+        @Html.TextBoxFor(model => model.Title, new { @class = "form-control title", style = "max-width: 100%", @id = "title", @placeholder = "Password" })
+        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        <label class="form-label p-4" for="title">Insert the title of the movie</label>
     </div>
+
+
+
+
+
+
+
+    <div class="form-group shadow-sm p-3  bg-body-tertiary rounded">
+        @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @id = "tiny", style = "height: 500px;", placeholder = "Your review here" })
+        @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="d-flex py-5">
+
+        <div class="px-2">
+            <p class="mb-0 mt-2">Private ?   </p>
+        </div>
+        <div class="px-2 mb-0 mt-2">
+            @Html.EditorFor(model => model.IsPrivate)
+        </div>
+
+        <div class="ms-auto">
+            <button type="button" class="btn btn-danger" onclick="discardChanges()">Discard</button>
+            <input type="submit" value="Create" class="btn btn-success" />
+        </div>
+
+
+    </div>
+
+</div>
 }
 
 
 
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
@@ -82,7 +74,7 @@ max-width: 100% ;
     <script>
         tinymce.init({
             selector: 'textarea#tiny',
-                plugins: [
+            plugins: [
                 'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
                 'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
                 'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
@@ -90,5 +82,13 @@ max-width: 100% ;
             toolbar: 'undo redo | a11ycheck casechange blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify |' +
                 'bullist numlist checklist outdent indent | removeformat | code table help'
         })
+    </script>
+
+    <script>
+        function discardChanges() {
+            if (confirm("Are you sure you want to discard changes?")) {
+                window.location.href = "@Url.Action("Index", "Posts")";
+            }
+        }
     </script>
 }

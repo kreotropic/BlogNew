@@ -42,12 +42,14 @@ namespace BlogNew.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 posts = posts
-                    .Where(p => p.Post.Title.Contains(searchString) || p.User.UserName.Contains(searchString))
+                    .Where(p =>
+                        p.Post.Title.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        p.User.UserName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)
                     .ToList();
 
                 if (posts.Count == 0)
                 {
-                    TempData["NoMoviesFound"] = "No movies were found with the given title or username.";
+                    TempData["NoMoviesFound"] = "No movies were found with the given title.";
                     return RedirectToAction("Index", "Posts");
                 }
             }

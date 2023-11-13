@@ -27,10 +27,10 @@
     <div class="d-flex px-5 ">
         <p class="px-2 fst-italic">Created by: </p>
 
-        
+
         @if (Model.User != null)
         {
-            @Html.DisplayFor(model => model.User.UserName, new {@class= "" })
+            @Html.ActionLink(Model.User.UserName, "Index", "Posts", new { searchString = Model.User.UserName }, new { @class = "" })
         }
         else
         {
@@ -44,19 +44,19 @@
             @string.Format("{0:yyyy-MM-dd}", Model.CreatedAt)
         </p>
 
-        
-            @if (User.Identity.IsAuthenticated)
-            {
-                bool isCreator = Model.UserId == User.Identity.GetUserId();
 
-                if (isCreator)
-                {
-                    <div class="ms-auto">
-                        @Html.ActionLink("Edit", "Edit", new { id = Model.PostId }, new { @class = "link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover px-2" })
-                        @Html.ActionLink("Delete", "Delete", new { id = Model.PostId }, new { @class = "link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" })
-                    </div>
-                }
+        @if (User.Identity.IsAuthenticated)
+        {
+            bool isCreator = Model.UserId == User.Identity.GetUserId();
+
+            if (isCreator)
+            {
+                <div class="ms-auto">
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.PostId }, new { @class = "btn btn-primary px-2 " })
+                    @Html.ActionLink("Delete", "Delete", new { id = Model.PostId }, new { @class = "btn btn-danger" })
+                </div>
             }
+        }
     </div>
 
  
@@ -67,3 +67,8 @@
     </div>
 </div>
 
+<style>
+    .btn{
+        min-width: 70px;
+    }
+</style>
