@@ -27,8 +27,8 @@ namespace BlogNew.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager _userManager;
-        private const int IndexPageSize = 15;
-        private const int PostsPageSize = 5;
+        private const int IndexPageSize = 12;
+        private const int PostsPageSize = 8;
 
         public ApplicationUserManager UserManager
         {
@@ -127,22 +127,31 @@ namespace BlogNew.Controllers
             var query = from p in db.Posts
                         where p.UserId == applicationUser.Id
                         && !p.IsPrivate
-                        orderby(p.CreatedAt) descending
-                        select p;
+                        orderby (p.CreatedAt) descending
+                        select new UserPostViewModel { Post = p };
 
-            var posts = query.ToList();
+            var userPosts = query.ToList();
 
             ViewBag.Username = applicationUser.UserName;
             ViewBag.IsAdmin = User.IsInRole("Admin");
 
-            if (posts.Count == 0)
+            if (userPosts.Count == 0)
             {
                 return View("~/Views/Users/NoPosts.cshtml");
             }
             
             ViewBag.UserId = applicationUser.Id;
+
+
+            //See if current user has liked and sets Thumb counter for each post
+            foreach (var p in userPosts)
+            {
+                Post post = p.Post;
+                p.HasUserLiked = HasCurrentUserLiked(post.PostId);
+                post.ThumbsCount = db.Thumbs.Count(t => t.PostId == post.PostId);
+            }
                         
-            return View(posts.ToPagedList(page, PostsPageSize));
+            return View(userPosts.ToPagedList(page, PostsPageSize));
         }
 
         // GET: Users/Create
@@ -317,6 +326,16 @@ namespace BlogNew.Controllers
             {
                 ModelState.AddModelError("", error);
             }
+        }
+
+        private bool HasCurrentUserLiked(int postId)
+        {
+            string userId = User.Identity.GetUserId();
+            if (userId == null)
+            {
+                return false;
+            }
+            return db.Thumbs.Any(t => t.UserId == userId && t.PostId == postId);
         }
 
         private IQueryable<string> GetAllRolesFromDB()

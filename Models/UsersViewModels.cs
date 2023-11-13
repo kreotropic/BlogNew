@@ -68,4 +68,10 @@ namespace BlogNew.Models
 
         public List<SelectListItem> SelectRoles { get; set; } = new List<SelectListItem>();
     }
+
+    public class UserPostViewModel
+    {
+        public bool HasUserLiked { get; set; }
+        public Post Post { get; set; }
+    }
 }
