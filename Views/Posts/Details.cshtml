@@ -48,8 +48,9 @@
         @if (User.Identity.IsAuthenticated)
         {
             bool isCreator = Model.UserId == User.Identity.GetUserId();
+            bool isAdmin = User.IsInRole("Admin");
 
-            if (isCreator)
+            if (isCreator || isAdmin)
             {
                 <div class="ms-auto">
                     @Html.ActionLink("Edit", "Edit", new { id = Model.PostId }, new { @class = "btn btn-primary px-2 " })
@@ -62,7 +63,7 @@
  
     <div class="px-2">
         <div class="px-5" style="margin-bottom: 40px;">
-            @Html.ActionLink("Back to List", "Index", new { @class = " link" })
+            @Html.ActionLink("Back to List", "Index",null, new { @class = " link" })
         </div>
     </div>
 </div>
