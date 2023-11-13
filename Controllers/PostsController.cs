@@ -16,14 +16,13 @@ namespace BlogNew.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Posts
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, DateTime? dateFilter, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
 
-            if (searchString != null)
+            if (searchString != null || dateFilter != null)
             {
                 page = 1;
             }
@@ -41,13 +40,22 @@ namespace BlogNew.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                posts = posts.Where(p => p.Post.Title.Contains(searchString) || p.User.UserName.Contains(searchString)).ToList();
+                posts = posts
+                    .Where(p => p.Post.Title.Contains(searchString) || p.User.UserName.Contains(searchString))
+                    .ToList();
 
                 if (posts.Count == 0)
                 {
                     TempData["NoMoviesFound"] = "No movies were found with the given title or username.";
                     return RedirectToAction("Index", "Posts");
                 }
+            }
+
+            if (dateFilter != null)
+            {
+                posts = posts
+                    .Where(p => p.Post.CreatedAt.Date == dateFilter)
+                    .ToList();
             }
 
             foreach (var post in posts)
@@ -59,7 +67,9 @@ namespace BlogNew.Controllers
                 ViewBag.AlreadyThumbed = alreadyThumbed;
             }
 
-            posts = posts.Where(p => p.Post.IsPrivate == false).ToList();
+            posts = posts
+                .Where(p => p.Post.IsPrivate == false)
+                .ToList();
 
             switch (sortOrder)
             {
@@ -79,6 +89,7 @@ namespace BlogNew.Controllers
 
             return View(posts.Select(p => p.Post).ToPagedList(pageNumber, pageSize));
         }
+
 
 
 
@@ -193,7 +204,7 @@ namespace BlogNew.Controllers
                 // Create a detached entity
                 db.Posts.Attach(postDB);
 
-                int maxLength = 256;
+                int maxLength = 350;
                 //Updates Sinopse
                 if (post.Content.Length > maxLength)
                 {
@@ -201,12 +212,12 @@ namespace BlogNew.Controllers
 
                     if (lastSpace != -1)
                     {
-                        // Trim at the last space within the first 256 characters
+                        // Trim at the last space within the first 350 characters
                         postDB.Sinopse = post.Content.Substring(0, lastSpace);
                     }
                     else
                     {
-                        // No space found within the first 256 characters, so just trim at the character limit
+                        // No space found within the first 350 characters, so just trim at the character limit
                         postDB.Sinopse = post.Content.Substring(0, maxLength);
                     }
                 }
@@ -239,18 +250,29 @@ namespace BlogNew.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Post post = db.Posts.Find(id);
+
             if (post == null)
             {
                 return HttpNotFound();
             }
-            //If current logged in user is different from post author return not found
+
+            // If current logged-in user is different from post author, return not found
             if (post.UserId != User.Identity.GetUserId())
             {
                 return HttpNotFound();
             }
+
+            // Get the username of the post author
+            string authorUsername = db.Users.Where(u => u.Id == post.UserId).Select(u => u.UserName).FirstOrDefault();
+
+            // Pass the author username to the view
+            ViewBag.AuthorUsername = authorUsername;
+
             return View(post);
         }
+
 
         // POST: Posts/Delete/5
         [HttpPost, ActionName("Delete")]

@@ -12,6 +12,11 @@
         font-size: 2.5rem;
         font-weight: bold;
     }
+
+    <style >
+    .custom-sinopse {
+        font-size: 3rem; /* Adjust the font size as needed */
+    }
 </style>
 
 @{
@@ -31,12 +36,12 @@
     {
         <div class="container">
             <div class="card  shadow-lg p-3 mb-3 bg-body-tertiary rounded">
-                <div class="card-body">
+                <div class="card-body px-5">
 
-                    <h5 class="card-title pt-4 pb-4">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark title text-uppercase fw-light" })</h5>
+                    <h5 class="card-title pt-4 pb-4">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark title text-uppercase fw-medium" })</h5>
 
-                    <p class="card-text text-size">@Html.Raw(item.Sinopse) ...>></p>
-                    
+                    <div class="custom-sinopse"><span class="fs-4 ">@Html.Raw(item.Sinopse)...>></span></div>
+
                     <div class="d-flex align-items-center justify-content-between mt-5">
 
                         <div class="card-text px-1">
@@ -46,7 +51,7 @@
                                 {
                                     @Html.AntiForgeryToken()
                                     <button type="button" class="btn thumbs-up-btn" data-post-id="@item.PostId">
-                                        <i class="thumb_icon bi @(ViewBag.AlreadyThumbed ? "bi-hand-thumbs-up-fill" : "bi-hand-thumbs-up")"></i>
+                                        <i class="thumb_icon bi @(ViewBag.AlreadyThumbed ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill")"></i>
                                         <span class="thumbs-count">@item.ThumbsCount</span>
                                     </button>
 
@@ -73,11 +78,19 @@
                         </p>
 
 
-                        <p class="card-text">
+                        <p class="card-text px-5">
                             <small class="text-muted">
-                                @Html.ActionLink(item.CreatedAt.ToString("MM/dd/yyyy"), "Index", "Posts", new { date = item.CreatedAt.ToString("yyyy-MM-dd") }, new { @class = "your-link-class" })
+                                @Html.ActionLink(
+                                    item.CreatedAt.ToString("MM/dd/yyyy"),
+                                    "Index",  
+                                    "Posts", 
+                                    new { dateFilter = item.CreatedAt.Date }, 
+                                    new { @class = "link" }
+                                )
                             </small>
                         </p>
+
+
 
 
 
@@ -98,9 +111,13 @@
 
 </div>
 
-<div class="pagination-container">
-    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
-</div>
+
+
+
+
+    <div class="pagination-container pb-3">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    </div>
 
 @section scripts {
     <script>

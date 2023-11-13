@@ -58,13 +58,13 @@ namespace BlogNew.Models
                 .HasRequired(t => t.User)
                 .WithMany(u => u.Thumbs)
                 .HasForeignKey(t => t.UserId)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Thumb>()
                 .HasRequired(t => t.Post)
                 .WithMany()
                 .HasForeignKey(t => t.PostId)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(true);
 
 
         }
