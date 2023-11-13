@@ -7,7 +7,7 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Post editor</h2>
+<h2 class="mb-2">Edit your post</h2>
 
 
 @using (Html.BeginForm())
@@ -21,68 +21,49 @@
 
 
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="form-group shadow-sm p-3  bg-body-tertiary rounded">
             <div class="col-md-12">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control title" } })
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control title", style = "max-width: 100%" } })
                 @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.Sinopse, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Sinopse, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Sinopse, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label" })
-            @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @id = "tiny" })
+
+        <div class="form-group shadow-sm p-3  bg-body-tertiary rounded">
+            @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @id = "tiny", style = "height: 500px;" })
             @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
         </div>
 
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.CreatedAt, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.CreatedAt, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.CreatedAt, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
 
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.UpdatedAt, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.UpdatedAt, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.UpdatedAt, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsPrivate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsPrivate)
-                    @Html.ValidationMessageFor(model => model.IsPrivate, "", new { @class = "text-danger" })
-                </div>
+        <div class="form-group d-flex py-5 align-content-center ">
+
+
+            <div class="px-2">
+                <p class="mb-0 mt-2">Private ?   </p>
             </div>
+            <div class="px-2 mb-0 mt-2">
+                @Html.EditorFor(model => model.IsPrivate)
+            </div>
+            <div class="ms-auto px-2">
+                <input type="submit" value="Save" class="btn btn-success" />
+                <button type="button" class="btn btn-danger" onclick="discardChanges()">Discard</button>
+            </div>
+
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-                <button type="button" class="btn btn-outline-danger" onclick="discardChanges()">Discard Changes</button>
-            </div>
-        </div>
+
 
 
     </div>
 }
 
-@*<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>*@
+<style>
+    .btn {
+        min-width: 70px
+    }
+</style>
 
 @section Scripts {
 
@@ -101,7 +82,7 @@
         })
     </script>
 
-        <script>
+    <script>
         function discardChanges() {
             if (confirm("Are you sure you want to discard changes?")) {
                 window.location.href = "@Url.Action("Index", "Posts")";
