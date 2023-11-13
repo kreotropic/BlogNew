@@ -209,6 +209,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\PostsViewModels.cs" />
     <Compile Include="Models\Thumb.cs" />
     <Compile Include="Models\UsersViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -309,6 +310,7 @@
     <Content Include="Views\Manage\Posts.cshtml" />
     <Content Include="Views\Manage\PostsAdmin.cshtml" />
     <Content Include="Views\Users\NoPosts.cshtml" />
+    <Content Include="Views\Posts\NoPosts.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

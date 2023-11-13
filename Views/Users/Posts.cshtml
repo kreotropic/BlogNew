@@ -7,14 +7,12 @@
 <style>
     .date, .thumbs-count, .thumb-icon {
         color: lightslategrey;
+        font-size: 1.15rem;
     }
 
-    .date {
-        font-size: 0.95rem;
-    }
-
-    .thumbs-count, .thumb-icon {
-        font-size: 1.2rem;
+    .thumbs-up-btn {
+        padding: 0;
+        border: none;
     }
 
     .title-link {
@@ -62,7 +60,7 @@
                                 using (Html.BeginForm("ThumbsUp", "Posts", new { postId = i.Post.PostId }, FormMethod.Post))
                                 {
                                     @Html.AntiForgeryToken()
-                                    <button type="button" class="btn thumbs-up-btn" data-post-id="@i.Post.PostId">
+                                    <button type="button" class="d-flex align-items-center gap-1 btn thumbs-up-btn" data-post-id="@i.Post.PostId">
                                         <i class="thumb-icon bi bi-hand-thumbs-up-fill @(i.HasUserLiked ? "liked" : "not-liked")"></i>
                                         <span class="thumbs-count">@i.Post.ThumbsCount</span>
                                     </button>
@@ -71,8 +69,10 @@
                             }
                             else
                             {
-                                <i class="thumb-icon bi bi-hand-thumbs-up-fill @(i.HasUserLiked ? "liked" : "not-liked")"></i>
-                                <span class="thumbs-count">@i.Post.ThumbsCount</span>
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="thumb-icon bi bi-hand-thumbs-up-fill @(i.HasUserLiked ? "liked" : "not-liked")"></i>
+                                    <span class="thumbs-count">@i.Post.ThumbsCount</span>
+                                </div>
                             }
                         </div>
                     </div>

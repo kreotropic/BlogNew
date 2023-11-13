@@ -1,131 +1,117 @@
-﻿@model PagedList.IPagedList<BlogNew.Models.Post>
+﻿@model PagedList.IPagedList<BlogNew.Models.PostIndexViewModel>
 @using PagedList.Mvc;
-
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
-<link href="~/Content/style.css" rel="stylesheet" type="text/css" />
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<style>
-    .title {
-        text-decoration: none;
-        color: #4A4A4A;
-        transition: color 0.3s ease;
-        font-size: 2.5rem;
-        font-weight: bold;
-    }
-
-    <style >
-    .custom-sinopse {
-        font-size: 3rem; /* Adjust the font size as needed */
-    }
-</style>
 
 @{
     ViewBag.Title = "Home Page";
 }
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<style>
+    .date, .thumbs-count, .thumb-icon, .user-icon, .user-link {
+        color: lightslategrey;
+        
+    }
+    .date, .thumbs-count, .thumb-icon, .user-link {
+        font-size: 1.15rem;
+    }
 
+    .thumbs-up-btn {
+        padding: 0;
+        border: none;
+    }
 
+    .title-link {
+        color: inherit;
+    }
 
+    .title-link, .user-link {
+        text-decoration: none;
+    }
 
-<div class="table pb-5">
+    .liked {
+        color: forestgreen;
+    }
 
+    .not-liked {
+        color: lightgray;
+    }
+    .hero{
+        margin-block: 5rem;
+        background-color: #f5f8fa;
+        display: grid;
+        place-items: center;
+        padding: 5rem;
+    }
 
+    .hero-title {
+        font-size: 4rem;
+        font-weight: bold;
+    }
+</style>
+<main style="max-width:1000px; margin-inline:auto">
 
+    <div class="hero">
+        <div class="text-center d-grid gap-3">
+            <h1 class="hero-title">M-Log</h1>
+            <p class="fs-3 fst-italic">The Citizen Kane of Movie Blogs</p>
+        </div>
+    </div>
 
-    @foreach (var item in Model)
-    {
-        <div class="container">
-            <div class="card  shadow-lg p-3 mb-3 bg-body-tertiary rounded">
-                <div class="card-body px-5">
-
-                    <h5 class="card-title pt-4 pb-4">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark title text-uppercase fw-medium" })</h5>
-
-                    <div class="custom-sinopse"><span class="fs-4 ">@Html.Raw(item.Sinopse)...>></span></div>
-
-                    <div class="d-flex align-items-center justify-content-between mt-5">
-
-                        <div class="card-text px-1">
+    <div class="d-grid gap-2 mb-4 fs-5">
+        @foreach (var i in Model)
+        {
+            <div class="pb-4 mb-4" style="border-bottom: 1px solid #EBF2F6;">
+                <article>
+                    <h3 class="fw-bold text-break">@Html.ActionLink(i.Post.Title, "Details", "Posts", new { id = i.Post.PostId }, new { @class = "title-link" })</h3>
+                    <p class="text-break">@Html.Raw(i.Post.Sinopse)</p>
+                    <div class="d-flex gap-4 align-items-center">
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="user-icon bi bi-person-fill"></i>
+                            @Html.ActionLink(i.User.UserName, "Posts", "Users", new { id = i.User.Id }, new { @class = "user-link" })
+                        </div>
+                        <time class="date"><i class="bi bi-calendar me-2"></i>@i.Post.CreatedAt.ToShortDateString()</time>
+                        <div class="thumb-counter">
                             @if (User.Identity.IsAuthenticated)
                             {
-                                using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
+                                using (Html.BeginForm("ThumbsUp", "Posts", new { postId = i.Post.PostId }, FormMethod.Post))
                                 {
                                     @Html.AntiForgeryToken()
-                                    <button type="button" class="btn thumbs-up-btn" data-post-id="@item.PostId">
-                                        <i class="thumb_icon bi @(ViewBag.AlreadyThumbed ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill")"></i>
-                                        <span class="thumbs-count">@item.ThumbsCount</span>
+                                    <button type="button" class="d-flex align-items-center gap-1 btn thumbs-up-btn" data-post-id="@i.Post.PostId">
+                                        <i class="thumb-icon bi bi-hand-thumbs-up-fill @(i.HasUserLiked ? "liked" : "not-liked")"></i>
+                                        <span class="thumbs-count">@i.Post.ThumbsCount</span>
                                     </button>
 
                                 }
                             }
                             else
                             {
-                                <i class="thumb_icon bi bi-hand-thumbs-up"></i> <span class="thumbs-count">@item.ThumbsCount</span>
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="thumb-icon bi bi-hand-thumbs-up-fill @(i.HasUserLiked ? "liked" : "not-liked")"></i>
+                                    <span class="thumbs-count">@i.Post.ThumbsCount</span>
+                                </div>
                             }
                         </div>
-
-                        <p class="card-text mb-0">
-                            Created by:
-                            @if (!String.IsNullOrEmpty(item.User.UserName))
-                            {
-                                <a href="@Url.Action("Index", "Posts", new { searchString = item.User.UserName })">
-                                    @item.User.UserName
-                                </a>
-                            }
-                            else
-                            {
-                                @Html.DisplayFor(modelItem => item.User.UserName)
-                            }
-                        </p>
-
-
-                        <p class="card-text px-5">
-                            <small class="text-muted">
-                                @Html.ActionLink(
-                                    item.CreatedAt.ToString("MM/dd/yyyy"),
-                                    "Index",  
-                                    "Posts", 
-                                    new { dateFilter = item.CreatedAt.Date }, 
-                                    new { @class = "link" }
-                                )
-                            </small>
-                        </p>
-
-
-
-
-
-
-
-
                     </div>
-
-
-
-
-
-
-                </div>
+                </article>
             </div>
-        </div>
-    }
-
-</div>
-
-
-
-
-
-    <div class="pagination-container pb-3">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        }
     </div>
+
+    <div>
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("Index",
+            new { page, search = ViewBag.currentSearch }))
+    </div>
+</main>
 
 @section scripts {
     <script>
         $(document).ready(function () {
             $(".thumbs-up-btn").click(function () {
                 var postId = $(this).data("post-id");
-                var counterElement = $(this).closest('.card-body').find(".thumbs-count");
-                var thumbIcon = $(this).find(".thumb_icon");
+                var counterElement = $(this).find(".thumbs-count");
+                var thumbIcon = $(this).find(".thumb-icon");
 
                 $.ajax({
                     type: "POST",
@@ -136,14 +122,8 @@
                     },
                     success: function (data) {
                         counterElement.text(data.ThumbsCount);
-
-                        if (data.AlreadyThumbed) {
-                            thumbIcon.removeClass("bi-hand-thumbs-up-fill");
-                            thumbIcon.addClass("bi-hand-thumbs-up");
-                        } else {
-                            thumbIcon.removeClass("bi-hand-thumbs-up");
-                            thumbIcon.addClass("bi-hand-thumbs-up-fill");
-                        }
+                        thumbIcon.toggleClass("liked");
+                        thumbIcon.toggleClass("not-liked");
                     },
                     dataType: 'json',
                     error: function (error) {
@@ -155,8 +135,3 @@
 
     </script>
 }
-
-
-
-
-

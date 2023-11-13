@@ -27,12 +27,8 @@
                 <form class="d-flex input-group-sm pe-5">
                     @using (Html.BeginForm())
                     {
-                        @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Find movie" })
+                        @Html.TextBox("search", null, new { @class = "form-control mr-sm-2", placeholder = "Search", value = ViewBag.currentSearch })
                         <input type="submit" class="btn btn-outline-secondary" value="Find" />
-                        if (ViewBag.NoMoviesFound != null)
-                        {
-                            @ViewBag.NoMoviesFound
-                        }
                     }
                 </form>
                 @Html.Partial("_LoginPartial")
