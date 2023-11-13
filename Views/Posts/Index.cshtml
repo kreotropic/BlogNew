@@ -97,7 +97,7 @@
         }
     </div>
 
-    <div>
+    <div class="mb-3">
         Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
         @Html.PagedListPager(Model, page => Url.Action("Index",
