@@ -3,19 +3,29 @@
 @{
     ViewBag.Title = $"{ViewBag.Username}'s Posts";
 }
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <style>
-    .date, .thumb-counter {
-        font-size: 0.95rem;
+    .date, .thumbs-count, .thumb-icon {
         color: lightslategrey;
     }
+
+    .date {
+        font-size: 0.95rem;
+    }
+
+    .thumbs-count, .thumb-icon {
+        font-size: 1.2rem;
+    }
+
     .title-link {
         text-decoration: none;
         color: inherit;
     }
+
     .liked {
         color: forestgreen;
     }
+
     .not-liked {
         color: lightgray;
     }
@@ -42,21 +52,29 @@
         {
             <div class="pb-4 mb-4" style="border-bottom: 1px solid #EBF2F6;">
                 <article>
-                    <h3 class="fw-bold text-break">@Html.ActionLink(i.Post.Title, "Details", "Posts", new { id = i.Post.PostId}, new { @class="title-link" } )</h3>
+                    <h3 class="fw-bold text-break">@Html.ActionLink(i.Post.Title, "Details", "Posts", new { id = i.Post.PostId }, new { @class = "title-link" })</h3>
                     <p class="text-break">@i.Post.Sinopse</p>
-                    <div class="d-flex gap-4">
+                    <div class="d-flex gap-4 align-items-center">
                         <time class="date"><i class="bi bi-calendar me-2"></i>@i.Post.CreatedAt.ToShortDateString()</time>
-                        <span class="thumb-counter">
-                            @if (i.HasUserLiked)
+                        <div class="thumb-counter">
+                            @if (User.Identity.IsAuthenticated)
                             {
-                                <i class="bi bi-hand-thumbs-up-fill liked"></i>
+                                using (Html.BeginForm("ThumbsUp", "Posts", new { postId = i.Post.PostId }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" class="btn thumbs-up-btn" data-post-id="@i.Post.PostId">
+                                        <i class="thumb-icon bi bi-hand-thumbs-up-fill @(i.HasUserLiked ? "liked" : "not-liked")"></i>
+                                        <span class="thumbs-count">@i.Post.ThumbsCount</span>
+                                    </button>
+
+                                }
                             }
                             else
                             {
-                                <i class="bi bi-hand-thumbs-up-fill not-liked"></i>
+                                <i class="thumb-icon bi bi-hand-thumbs-up-fill @(i.HasUserLiked ? "liked" : "not-liked")"></i>
+                                <span class="thumbs-count">@i.Post.ThumbsCount</span>
                             }
-                            <span>@i.Post.ThumbsCount</span>
-                        </span>
+                        </div>
                     </div>
                 </article>
             </div>
@@ -70,4 +88,35 @@
             new { page, search = ViewBag.currentSearch, roleFilter = ViewBag.currentFilter, sortOrder = ViewBag.currentSort }))
     </div>
 </main>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".thumbs-up-btn").click(function () {
+                var postId = $(this).data("post-id");
+                var counterElement = $(this).find(".thumbs-count");
+                var thumbIcon = $(this).find(".thumb-icon");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Posts/ThumbsUp",
+                    data: {
+                        postId: postId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (data) {
+                        counterElement.text(data.ThumbsCount);
+                        thumbIcon.toggleClass("liked");
+                        thumbIcon.toggleClass("not-liked");
+                    },
+                    dataType: 'json',
+                    error: function (error) {
+                        console.error("Error during Thumbs Up:", error);
+                    }
+                });
+            });
+        });
+
+    </script>
+}
 

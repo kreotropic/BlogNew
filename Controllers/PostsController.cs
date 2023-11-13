@@ -183,8 +183,9 @@ namespace BlogNew.Controllers
             {
                 return HttpNotFound();
             }
-            //If current logged in user is different from post author return not found
-            if (post.UserId != User.Identity.GetUserId())
+
+            //If current logged in user is different from post author and is not an admin return not found
+            if (post.UserId != User.Identity.GetUserId() && !User.IsInRole("Admin"))
             {
                 return HttpNotFound();
             }
@@ -208,8 +209,8 @@ namespace BlogNew.Controllers
                 {
                     return HttpNotFound();
                 }
-                //If for whatever reason user associated with post is different from current logged in user return error page
-                if (postDB.UserId != User.Identity.GetUserId())
+                //If for whatever reason user associated with post is different from current logged in user and not an admin return error page
+                if (postDB.UserId != User.Identity.GetUserId() && !User.IsInRole("Admin"))
                 {
                     return View("~/Views/Shared/Error.cshtml");
                 }
@@ -277,8 +278,8 @@ namespace BlogNew.Controllers
                 return HttpNotFound();
             }
 
-            // If current logged-in user is different from post author, return not found
-            if (post.UserId != User.Identity.GetUserId())
+            // If current logged-in user is different from post author and not an admin, return not found
+            if (post.UserId != User.Identity.GetUserId() && !User.IsInRole("Admin"))
             {
                 return HttpNotFound();
             }
@@ -299,8 +300,8 @@ namespace BlogNew.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Post post = db.Posts.Find(id);
-            //If for whatever reason user associated with post is different from current logged in user return error page
-            if (post.UserId != User.Identity.GetUserId())
+            //If for whatever reason user associated with post is different from current logged in user and not an admin return error page
+            if (post.UserId != User.Identity.GetUserId() && !User.IsInRole("Admin"))
             {
                 return View("~/Views/Shared/Error.cshtml");
             }

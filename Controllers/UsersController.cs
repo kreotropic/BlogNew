@@ -306,6 +306,15 @@ namespace BlogNew.Controllers
         {
             ApplicationUser applicationUser = db.Users.Find(id);
 
+            //Delete likes made by user
+            var userThumbs = db.Thumbs.Where(t => t.UserId == applicationUser.Id);
+
+            foreach (var t in userThumbs)
+            {
+                db.Thumbs.Remove(t);
+            }            
+
+            //Delete user
             db.Users.Remove(applicationUser);
             db.SaveChanges();
             return RedirectToAction("Index");
