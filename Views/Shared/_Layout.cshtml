@@ -36,7 +36,7 @@
         </div>
     </nav>
 
-    <div class="container body-content mb-3">
+    <div class="container body-content">
         @RenderBody()
     </div>
 
@@ -44,7 +44,7 @@
         <div class="container-fluid ">
             <div class="row ">
                 <div class="col-md-6 d-flex justify-content-start">
-                    <p class="mb-0">&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+                    <p class="mb-0">&copy; @DateTime.Now.Year - By Vasco and Ricardo</p>
                 </div>
                 <div class="col-md-6 d-flex justify-content-end">
                     <p class="me-3 mb-0">@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</p>
