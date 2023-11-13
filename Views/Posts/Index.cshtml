@@ -22,8 +22,6 @@
 
 
 
-
-
 <div class="table">
 
 
@@ -32,33 +30,45 @@
     @foreach (var item in Model)
     {
         <div class="container">
-            <div class="card mb-4">
+            <div class="card  shadow-lg p-3 mb-3 bg-body-tertiary rounded">
                 <div class="card-body">
-                    <h5 class="card-title">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark title" })</h5>
-                    <p class="card-text">@Html.Raw(item.Sinopse) ...>></p>
-                    <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.CreatedAt)</small></p>
 
-                    <p class="card-text">Created by: @Html.DisplayFor(modelItem => item.User.UserName)</p>
+                    <h5 class="card-title pt-4 pb-4">@Html.ActionLink(item.Title, "Details", new { id = item.PostId }, new { @class = "text-dark title text-uppercase fw-light" })</h5>
 
-                    <div class="card-text">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
+                    <p class="card-text text-size">@Html.Raw(item.Sinopse) ...>></p>
+                    
+                    <div class="d-flex align-items-center justify-content-between mt-5">
+
+                        <div class="card-text px-1">
+                            @if (User.Identity.IsAuthenticated)
                             {
-                                @Html.AntiForgeryToken()
-                                <button type="button" class="btn thumbs-up-btn" data-post-id="@item.PostId">
-                                    <i class="thumb_icon bi @(ViewBag.AlreadyThumbed ? "bi-hand-thumbs-up-fill" : "bi-hand-thumbs-up")"></i>
-                                    <span class="thumbs-count">@item.ThumbsCount</span>
-                                </button>
+                                using (Html.BeginForm("ThumbsUp", "Posts", new { postId = item.PostId }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" class="btn thumbs-up-btn" data-post-id="@item.PostId">
+                                        <i class="thumb_icon bi @(ViewBag.AlreadyThumbed ? "bi-hand-thumbs-up-fill" : "bi-hand-thumbs-up")"></i>
+                                        <span class="thumbs-count">@item.ThumbsCount</span>
+                                    </button>
 
+                                }
                             }
-                        }
-                        else
-                        {
-                            <i class="thumb_icon bi bi-hand-thumbs-up"></i> <span class="thumbs-count">@item.ThumbsCount</span>
-                        }
-                    </div>
+                            else
+                            {
+                                <i class="thumb_icon bi bi-hand-thumbs-up"></i> <span class="thumbs-count">@item.ThumbsCount</span>
+                            }
+                        </div>
 
+                        <p class="card-text mb-0">Created by: @Html.DisplayFor(modelItem => item.User.UserName)</p>
+
+                        <p class="card-text">
+                            <small class="text-muted">@item.CreatedAt.ToString("MM/dd/yyyy")</small>
+                        </p>
+
+
+
+
+
+                    </div>
 
 
 

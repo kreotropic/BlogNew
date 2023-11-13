@@ -24,7 +24,7 @@
                         <li>@Html.ActionLink("Create post", "Create", "Posts", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                 </ul>
-                <form class="d-flex input-group-sm px-5">
+                <form class="d-flex input-group-sm pe-5">
                     @using (Html.BeginForm())
                     {
                         @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Find movie" })
