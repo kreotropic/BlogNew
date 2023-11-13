@@ -235,16 +235,16 @@ namespace BlogNew.Controllers
 
                     if (lastSpace != -1)
                     {
-                        post.Sinopse = contentWithoutImages.Substring(0, lastSpace);
+                        postDB.Sinopse = contentWithoutImages.Substring(0, lastSpace);
                     }
                     else
                     {
-                        post.Sinopse = contentWithoutImages.Substring(0, maxLength);
+                        postDB.Sinopse = contentWithoutImages.Substring(0, maxLength);
                     }
                 }
                 else
                 {
-                    post.Sinopse = contentWithoutImages;
+                    postDB.Sinopse = contentWithoutImages;
                 }
 
                 postDB.Title = post.Title;
