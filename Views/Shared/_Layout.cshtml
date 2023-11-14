@@ -6,7 +6,8 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    <link href="~/Content/BooststrapIcons/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
 </head>
 <body>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark p-0">
@@ -21,13 +22,13 @@
                     <li>@Html.ActionLink("Archive", "Index", "Archive", new { area = "" }, new { @class = "nav-link" })</li>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li>@Html.ActionLink("Create post", "Create", "Posts", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Create post", "Create", "Posts", new { area = "" }, new { @class = "nav-link no-wrap", @style = "white-space: nowrap;" })</li>
                     }
                 </ul>
-                <form class="d-flex input-group-sm pe-5">
+                <form class="d-flex input-group-sm pe-4">
                     @using (Html.BeginForm())
                     {
-                        @Html.TextBox("search", null, new { @class = "form-control mr-sm-2", placeholder = "Search", value = ViewBag.currentSearch })
+                        @Html.TextBox("search", null, new { @class = "form-control mr-sm-2", placeholder = "Search", value = ViewBag.currentSearch, style = "min-width: 70px;" })
                         <input type="submit" class="btn btn-outline-secondary" value="Find" />
                     }
                 </form>
@@ -42,17 +43,23 @@
 
     <footer class="bg-dark text-white p-1 fixed-bottom">
         <div class="container-fluid ">
-            <div class="row ">
-                <div class="col-md-6 d-flex justify-content-start">
-                    <p class="mb-0">&copy; @DateTime.Now.Year - By Vasco and Ricardo</p>
-                </div>
-                <div class="col-md-6 d-flex justify-content-end">
-                    <p class="me-3 mb-0">@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</p>
-                    <p class="me-3 mb-0">@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</p>
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-between">
+                    <div>
+                        <p class="mb-0">&copy; @DateTime.Now.Year - By Vasco and Ricardo</p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <p class="me-3 mb-0">@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</p>
+                        <p class="me-3 mb-0">@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</p>
+                    </div>
+
                 </div>
             </div>
         </div>
     </footer>
+
+
+
 
 
     @Scripts.Render("~/bundles/jquery")

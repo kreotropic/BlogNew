@@ -36,17 +36,18 @@
         color: lightgray;
     }
     .hero{
-        margin-block: 5rem;
+        margin-block: 3rem;
         background-color: #f5f8fa;
         display: grid;
         place-items: center;
-        padding: 5rem;
+        padding: 3rem;
     }
 
     .hero-title {
         font-size: 4rem;
         font-weight: bold;
     }
+
 </style>
 <main style="max-width:1000px; margin-inline:auto">
 
@@ -63,7 +64,7 @@
             <div class="pb-4 mb-4" style="border-bottom: 1px solid #EBF2F6;">
                 <article>
                     <h3 class="fw-bold text-break">@Html.ActionLink(i.Post.Title, "Details", "Posts", new { id = i.Post.PostId }, new { @class = "title-link" })</h3>
-                    <p class="text-break">@Html.Raw(i.Post.Sinopse)</p>
+                    <p class="text-break">@Html.Raw(i.Post.Sinopse)...</p>
                     <div class="d-flex gap-4 align-items-center">
                         <div class="d-flex align-items-center gap-1">
                             <i class="user-icon bi bi-person-fill"></i>

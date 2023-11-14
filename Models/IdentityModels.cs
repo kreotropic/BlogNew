@@ -36,7 +36,7 @@ namespace BlogNew.Models
 
 
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("ConnectionMlog", throwIfV1Schema: false)
         {
         }
 

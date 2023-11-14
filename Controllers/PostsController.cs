@@ -16,7 +16,7 @@ namespace BlogNew.Controllers
     public class PostsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-        private const int IndexPageSize = 8;
+        private const int IndexPageSize = 6;
 
         public ActionResult Index(string search, int page = 1)
         {
