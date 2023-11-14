@@ -25,7 +25,7 @@
                         <li>@Html.ActionLink("Create post", "Create", "Posts", new { area = "" }, new { @class = "nav-link no-wrap", @style = "white-space: nowrap;" })</li>
                     }
                 </ul>
-                <form class="d-flex input-group-sm pe-4">
+                <form class="d-flex input-group-sm pe-4" method="get" action="@Url.Action("Index", "Posts")">
                     @using (Html.BeginForm())
                     {
                         @Html.TextBox("search", null, new { @class = "form-control mr-sm-2", placeholder = "Search", value = ViewBag.currentSearch, style = "min-width: 70px;" })
