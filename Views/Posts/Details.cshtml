@@ -60,7 +60,31 @@
         }
     </div>
 
- 
+
+    <!--THUMBS BUTTON-->
+    <div class="d-grid justify-content-center px-5 mb-4">
+        @if (User.Identity.IsAuthenticated)
+        {
+            using (Html.BeginForm("ThumbsUp", "Posts", new { postId = Model.PostId }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <button type="button" class="d-flex align-items-center gap-1 btn thumbs-up-btn" data-post-id="@Model.PostId">
+                    <i class="thumb-icon bi bi-hand-thumbs-up-fill @(ViewBag.HasUserLiked ? "liked" : "not-liked")"></i>
+                    <span class="thumbs-count">@ViewBag.ThumbsCount</span>
+                </button>
+
+            }
+        }
+        else
+        {
+            <div class="d-flex align-items-center gap-1">
+                <i class="thumb-icon bi bi-hand-thumbs-up-fill @(ViewBag.HasUserLiked ? "liked" : "not-liked")"></i>
+                <span class="thumbs-count">@ViewBag.ThumbsCount</span>
+            </div>
+        }
+    </div>
+
+
     <div class="px-2">
         <div class="px-5" style="margin-bottom: 40px;">
             @Html.ActionLink("Back to List", "Index")
@@ -70,7 +94,7 @@
 </div>
 
 <style>
-    .btn{
+    .btn {
         min-width: 70px;
     }
 
@@ -78,4 +102,56 @@
         max-width: 100%;
         height: auto;
     }
+
+    .liked {
+        color: forestgreen;
+    }
+
+    .not-liked {
+        color: grey;
+    }
+
+    .thumbs-count {
+        color: grey;
+    }
+
+    .thumb-icon, .thumbs-count {
+        font-size: 2.25rem;
+    }
+
+    .thumbs-up-btn {
+        padding: 0;
+        border: none;
+    }
 </style>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".thumbs-up-btn").click(function () {
+                var postId = $(this).data("post-id");
+                var counterElement = $(this).find(".thumbs-count");
+                var thumbIcon = $(this).find(".thumb-icon");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Posts/ThumbsUp",
+                    data: {
+                        postId: postId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (data) {
+                        counterElement.text(data.ThumbsCount);
+                        thumbIcon.toggleClass("liked");
+                        thumbIcon.toggleClass("not-liked");
+                    },
+                    dataType: 'json',
+                    error: function (error) {
+                        console.error("Error during Thumbs Up:", error);
+                    }
+                });
+            });
+        });
+
+    </script>
+}
