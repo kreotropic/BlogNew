@@ -30,7 +30,7 @@
 
         @if (Model.User != null)
         {
-            @Html.ActionLink(Model.User.UserName, "Index", "Posts", new { searchString = Model.User.UserName }, new { @class = "" })
+            @Html.ActionLink(Model.User.UserName, "Posts", "Users", new { id = Model.UserId}, new { @class = "" })
         }
         else
         {
