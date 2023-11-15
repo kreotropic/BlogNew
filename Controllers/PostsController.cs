@@ -76,6 +76,10 @@ namespace BlogNew.Controllers
             {
                 return HttpNotFound();
             }
+
+            ViewBag.HasUserLiked = HasCurrentUserLiked(post.PostId);
+            ViewBag.ThumbsCount = db.Thumbs.Count(t => t.PostId == post.PostId);
+
             return View(post);
         }
 
