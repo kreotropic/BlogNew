@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html class="h-100">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,7 @@
 
 
 </head>
-<body>
+<body class="d-flex flex-column h-100">
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark p-0">
         <div class="container">
             @Html.ActionLink("M-LOG", "Index", "Posts", new { area = "" }, new { @class = "navbar-brand" })
@@ -42,7 +42,7 @@
         @RenderBody()
     </div>
 
-    <footer class="bg-dark text-white p-1 fixed-bottom">
+    <footer class="bg-dark text-white p-1 mt-auto">
         <div class="container-fluid ">
             <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
